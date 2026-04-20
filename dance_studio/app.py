@@ -266,9 +266,12 @@ def generate_dance(req: GenerateRequest):
             stage_width=req.stage_width, stage_depth=req.stage_depth,
         )
         sequence = ai.generate(req.description)
-        return dataclasses.asdict(sequence)
+        result = dataclasses.asdict(sequence)
+        # Sanitise: replace any non-serialisable objects and ensure str fields are str
+        return json.loads(json.dumps(result, ensure_ascii=False))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        detail = str(e).encode("utf-8", errors="replace").decode("utf-8")
+        raise HTTPException(status_code=500, detail=detail)
 
 
 @app.post("/api/simulate")
