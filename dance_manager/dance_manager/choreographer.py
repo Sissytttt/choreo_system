@@ -217,7 +217,7 @@ class MotifMemory:
 
 # ── Sequence Runner ───────────────────────────────────────────────────────────
 
-def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
+def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:  # noqa: C901
     """Execute a Sequence by sending goals to the DanceActionServer.
 
     Iterates through every Phrase and Motif in order. For each Motif:
@@ -234,12 +234,32 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
                        .send_goal_and_wait(move_name) signature.
         sequence: A populated Sequence dataclass.
     """
+    from dance_manager.dance_vocabulary import translate_params as _translate_params
+
     beat = 60.0 / max(1.0, sequence.tempo_bpm)
     memory = MotifMemory()
 
     # Count total moves for motif memory recall timing
     total_moves = sum(len(p.motifs) for p in sequence.phrases)
     move_index = 0
+
+    _FLIP_MAP = {
+        "left": "right", "right": "left",
+        "forward": "backward", "backward": "forward",
+    }
+
+    def _flip_params(p: dict) -> dict:
+        """Return a copy of p with direction, side, clockwise, and angle flipped."""
+        f = dict(p)
+        if "side" in f:
+            f["side"] = _FLIP_MAP.get(f["side"], f["side"])
+        if "direction" in f:
+            f["direction"] = _FLIP_MAP.get(f["direction"], f["direction"])
+        if "clockwise" in f:
+            f["clockwise"] = not bool(f["clockwise"])
+        if "angle" in f and isinstance(f["angle"], (int, float)):
+            f["angle"] = -f["angle"]
+        return f
 
     def _expand(motif: Motif) -> list:
         """Expand one Motif into a list of (move_name, params, gap_before, energy, texture) tuples."""
@@ -254,17 +274,84 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
 
         mtype = mod.get("type", "")
 
+        # ── Repetition & Pattern ─────────────────────────────────────────────
         if mtype == "repeat":
             n = mod.get("n", 1)
             gap = mod.get("gap", 0.0)
-            return [(motif.move, params, base_gap if i == 0 else gap, energy, texture) for i in range(n)]
+            return [(motif.move, params, base_gap if i == 0 else gap, energy, texture)
+                    for i in range(n)]
 
+        if mtype == "repeat_variation":
+            n = mod.get("n", 3)
+            e_delta = mod.get("energy_delta", 0.1)
+            s_delta = mod.get("scale_delta", 0.0)
+            gap = mod.get("gap", beat)
+            pairs = []
+            for i in range(n):
+                e = max(0.0, min(1.0, energy + i * e_delta))
+                p = dict(params)
+                if s_delta != 0.0 and "radius" in p and isinstance(p["radius"], (int, float)):
+                    p["radius"] = p["radius"] * (1.0 + i * s_delta)
+                pairs.append((motif.move, p, base_gap if i == 0 else gap, e, texture))
+            return pairs
+
+        if mtype == "alternate":
+            other = mod.get("other_move", motif.move)
+            other_params = mod.get("other_params", {})
+            n = mod.get("n", 2)
+            gap = mod.get("gap", 0.0)
+            pairs = []
+            for i in range(n):
+                pairs.append((motif.move, params, base_gap if i == 0 else gap, energy, texture))
+                pairs.append((other, other_params, gap, energy, texture))
+            return pairs
+
+        if mtype == "asymmetric_pause":
+            short = mod.get("short", 0.2)
+            long_ = mod.get("long", 0.8)
+            n = mod.get("n", 2)
+            pairs = []
+            for i in range(n):
+                pause = short if i % 2 == 0 else long_
+                pairs.append((motif.move, params, base_gap if i == 0 else pause, energy, texture))
+            return pairs
+
+        # ── Transformation ───────────────────────────────────────────────────
         if mtype == "mirror":
             gap = mod.get("gap", 0.0)
-            left_params = {**params, "side": "left"}
-            right_params = {**params, "side": "right"}
-            return [(motif.move, left_params, base_gap, energy, texture),
-                    (motif.move, right_params, gap, energy, texture)]
+            return [(motif.move, params, base_gap, energy, texture),
+                    (motif.move, _flip_params(params), gap, energy, texture)]
+
+        if mtype == "direction_flip":
+            gap = mod.get("gap", 0.0)
+            return [(motif.move, params, base_gap, energy, texture),
+                    (motif.move, _flip_params(params), gap, energy, texture)]
+
+        if mtype == "invert":
+            factor = mod.get("factor", 1.0)
+            inv_energy = max(0.0, min(1.0, 1.0 - energy))
+            inv_params = dict(params)
+            if factor != 1.0 and "radius" in inv_params and isinstance(inv_params["radius"], (int, float)):
+                inv_params["radius"] = inv_params["radius"] * factor
+            return [(motif.move, inv_params, base_gap, inv_energy, texture)]
+
+        if mtype == "reverse":
+            # Single motif — no-op (reversal is meaningful only at phrase level)
+            return [(motif.move, params, base_gap, energy, texture)]
+
+        # ── Parametric & Dynamic Modulation ─────────────────────────────────
+        if mtype == "scale":
+            factor = mod.get("factor", 0.5)
+            scaled = dict(params)
+            for key in ("radius", "distance", "max_speed", "linear_speed"):
+                if key in scaled and isinstance(scaled[key], (int, float)):
+                    scaled[key] = scaled[key] * factor
+            return [(motif.move, scaled, base_gap, energy, texture)]
+
+        if mtype == "speed_modulate":
+            factor = mod.get("factor", 1.5)
+            new_e = max(0.0, min(1.0, energy * factor))
+            return [(motif.move, params, base_gap, new_e, texture)]
 
         if mtype == "decay":
             n = mod.get("n", 3)
@@ -290,26 +377,23 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
             hold = mod.get("hold_duration", 1.0)
             return [(motif.move, params, base_gap + hold, energy, texture)]
 
-        if mtype == "alternate":
-            other = mod.get("other_move", motif.move)
-            other_params = mod.get("other_params", {})
-            n = mod.get("n", 2)
-            gap = mod.get("gap", 0.0)
-            pairs = []
-            for i in range(n):
-                pairs.append((motif.move, params, base_gap if i == 0 else gap, energy, texture))
-                pairs.append((other, other_params, gap, energy, texture))
-            return pairs
+        if mtype == "rhythm_shift":
+            gap_scale = mod.get("gap_scale", 0.7)
+            return [(motif.move, params, max(0.0, base_gap * gap_scale), energy, texture)]
 
-        if mtype == "asymmetric_pause":
-            short = mod.get("short", 0.2)
-            long_ = mod.get("long", 0.8)
-            n = mod.get("n", 2)
-            pairs = []
-            for i in range(n):
-                pause = short if i % 2 == 0 else long_
-                pairs.append((motif.move, params, base_gap if i == 0 else pause, energy, texture))
-            return pairs
+        # ── Organic Variation ────────────────────────────────────────────────
+        if mtype == "drift":
+            angle_delta = mod.get("angle_delta", 15.0)
+            drifted = dict(params)
+            if "angle" in drifted and isinstance(drifted["angle"], (int, float)):
+                drifted["angle"] = drifted["angle"] + angle_delta
+            return [(motif.move, drifted, base_gap, energy, texture)]
+
+        if mtype == "env_modulation":
+            env_params = {**params,
+                          "env_bias": float(mod.get("env_bias", 0.0)),
+                          "env_resistance": float(mod.get("env_resistance", 0.0))}
+            return [(motif.move, env_params, base_gap, energy, texture)]
 
         # Unknown modifier type — fall back to bare move
         return [(motif.move, params, base_gap, energy, texture)]
@@ -334,7 +418,8 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
                 else:
                     print(f"[Choreographer]   {move_name}{params_str} (e={energy:.1f} t={texture})")
 
-                _send_goal(move_name, params, energy, texture)
+                translated = _translate_params(params, tempo_bpm=sequence.tempo_bpm)
+                _send_goal(move_name, translated, energy, texture)
                 memory.record(move_name)
                 move_index += 1
 
@@ -371,17 +456,30 @@ class AIChoreographer:
         "Zigzag", "Slalom", "WagWalk",
         "Arc", "TeacupSpin", "TeacupCircle",
         "Spiral", "FigureEight", "Flower",
+        "Pacing", "SuddenStop", "ChaineTurns",
     ]
 
     MODIFIER_SCHEMA = """\
 modifier (optional, null for no modifier):
-  { "type": "repeat",    "n": <int>,   "gap": <float> }
-  { "type": "mirror",    "gap": <float> }
-  { "type": "decay",     "n": <int>,   "factor": <float 0-1> }
-  { "type": "crescendo", "n": <int>,   "factor": <float >1> }
-  { "type": "tension",   "hold_duration": <float> }
-  { "type": "alternate", "other_move": "<move_name>", "n": <int>, "gap": <float> }
-  { "type": "asymmetric_pause", "short": <float>, "long": <float>, "n": <int> }\
+  Repetition & Pattern
+  { "type": "repeat",            "n": <int>,   "gap": <float> }
+  { "type": "repeat_variation",  "n": <int>,   "energy_delta": <float>, "scale_delta": <float>, "gap": <float> }
+  { "type": "alternate",         "other_move": "<move_name>", "n": <int>, "gap": <float> }
+  { "type": "asymmetric_pause",  "short": <float>, "long": <float>, "n": <int> }
+  Transformation
+  { "type": "mirror",            "gap": <float> }
+  { "type": "direction_flip",    "gap": <float> }
+  { "type": "invert",            "factor": <float> }
+  Parametric & Dynamic Modulation
+  { "type": "scale",             "factor": <float> }
+  { "type": "speed_modulate",    "factor": <float> }
+  { "type": "decay",             "n": <int>,   "factor": <float 0-1> }
+  { "type": "crescendo",         "n": <int>,   "factor": <float >1> }
+  { "type": "tension",           "hold_duration": <float> }
+  { "type": "rhythm_shift",      "gap_scale": <float> }
+  Organic Variation
+  { "type": "drift",             "angle_delta": <float degrees> }
+  { "type": "env_modulation",    "env_bias": <float rad/s>, "env_resistance": <float 0-1> }\
 """
 
     TEXTURE_OPTIONS = "neutral, honey, staccato, ice, cloud, magnet"
@@ -449,7 +547,12 @@ Moves accept an optional "params" object with move-specific arguments:
   TeacupSpin:   {{"side": "left"|"right"}}
   TeacupCircle: {{"direction": "left"|"right"}}
   Spiral:       {{"direction": "left"|"right"}}
+  Pacing:       {{"distance": <m>, "step_duration": <s>, "repetitions": <int>, "pause_duration": <s>}}
+  SuddenStop:   {{"direction": "forward"|"backward", "max_speed": <m/s>, "run_duration": <s>}}
+  ChaineTurns:  {{"turns": <float>, "half_turn_duration": <s>}}
   Glance, Bow, Shimmy, Pulse, Vibrate, WagWalk, FigureEight, Flower: no params needed (use {{}})
+
+{vocabulary_description}
 
 ━━ Dancer design thinking guidelines ━━
 1. Organise into 3–5 named phrases (intro, buildup, climax, wind-down, outro).
@@ -595,12 +698,14 @@ Moves accept an optional "params" object with move-specific arguments:
             ValueError: If the response cannot be parsed after max_retries.
         """
         from google.genai import types
+        from dance_manager.dance_vocabulary import get_vocabulary_description
 
         system = self.SYSTEM_PROMPT_TEMPLATE.format(
             platform_description=self._get_platform_description(),
             move_list=self._get_move_list_str(),
             texture_options=self.TEXTURE_OPTIONS,
             modifier_schema=self.MODIFIER_SCHEMA,
+            vocabulary_description=get_vocabulary_description(),
             stage_constraints=self._get_stage_constraints_str(),
         )
         contents = [description]

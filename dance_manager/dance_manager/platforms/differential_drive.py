@@ -30,8 +30,37 @@ from dance_manager.dance_moves import (
     tap_on_side, zigzag, pirouette, slalom, spin_on_axis,
     teacup_spin, spiral, teacup, figure_eight, flower,
     wag_walking, bow_sequence,
+    pacing, sudden_stop, chaine_turns,
     _brake, _brake_angular, _stop,
 )
+from dance_manager.dance_vocabulary import translate_params
+
+
+# ── Environment modulation proxy ─────────────────────────────────────────────
+
+class _EnvPublisher:
+    """Twist publisher proxy that applies environmental modulation.
+
+    Wraps the real publisher and modifies each Twist before forwarding:
+      env_bias       adds a constant angular.z offset (directional force / slope)
+      env_resistance multiplies linear.x by (1 - resistance) (viscosity / friction)
+    """
+
+    def __init__(self, real_pub, env_bias: float = 0.0, env_resistance: float = 0.0):
+        self._pub = real_pub
+        self._bias = float(env_bias)
+        self._resistance = max(0.0, min(1.0, float(env_resistance)))
+
+    def publish(self, twist):
+        from geometry_msgs.msg import Twist as _Twist
+        t = _Twist()
+        t.linear.x = twist.linear.x * (1.0 - self._resistance)
+        t.linear.y = twist.linear.y
+        t.linear.z = twist.linear.z
+        t.angular.x = twist.angular.x
+        t.angular.y = twist.angular.y
+        t.angular.z = twist.angular.z + self._bias
+        self._pub.publish(t)
 
 
 # ── Texture → motor parameter translation ────────────────────────────────────
@@ -97,43 +126,75 @@ class DiffDrivePlatform(RobotPlatform):
 
         Each entry is a function that takes (params, **extra_kwargs) where
         params is a dict of move-specific parameters (direction, side, angle, etc.).
+
+        NOTE: Lambdas reference self._twist_pub at call time (not capture time),
+        so temporarily replacing self._twist_pub (e.g. for env modulation) is
+        reflected immediately without rebuilding the registry.
         """
-        tp = self._twist_pub
         track = self._track_width
 
         return {
             # Social gestures
-            "Glance":       lambda p, **kw: glance(tp, **kw),
-            "Bow":          lambda p, **kw: bow_sequence(tp, **kw),
+            "Glance":       lambda p, **kw: glance(self._twist_pub, **kw),
+            "Bow":          lambda p, **kw: bow_sequence(self._twist_pub, **kw),
             # Linear translation
-            "Step":         lambda p, **kw: step(tp, direction=p.get("direction", "forward"), **kw),
-            "Glide":        lambda p, **kw: glide(tp, direction=p.get("direction", "forward"), **kw),
+            "Step":         lambda p, **kw: step(self._twist_pub,
+                                direction=p.get("direction", "forward"), **kw),
+            "Glide":        lambda p, **kw: glide(self._twist_pub,
+                                direction=p.get("direction", "forward"), **kw),
             # Expressive in-place
-            "Shimmy":       lambda p, **kw: shimmy(tp, **kw),
-            "Pulse":        lambda p, **kw: pulse(tp, **kw),
-            "Vibrate":      lambda p, **kw: vibrate(tp, **kw),
+            "Shimmy":       lambda p, **kw: shimmy(self._twist_pub, **kw),
+            "Pulse":        lambda p, **kw: pulse(self._twist_pub, **kw),
+            "Vibrate":      lambda p, **kw: vibrate(self._twist_pub, **kw),
             # Pivot / tap
-            "Tap":          lambda p, **kw: tap_on_side(tp, side=p.get("side", "right"), track=track, **kw),
-            "Pirouette":    lambda p, **kw: pirouette(tp, side=p.get("side", "left"), track=track, **kw),
+            "Tap":          lambda p, **kw: tap_on_side(self._twist_pub,
+                                side=p.get("side", "right"), track=track, **kw),
+            "Pirouette":    lambda p, **kw: pirouette(self._twist_pub,
+                                side=p.get("side", "left"), track=track, **kw),
             # Spin — angle in degrees, positive=CCW, negative=CW
             "Spin":         lambda p, **kw: spin_on_axis(
-                                tp,
+                                self._twist_pub,
                                 rotations=abs(p.get("angle", 360)) / 360.0,
                                 clockwise=p.get("angle", 360) < 0,
                                 **kw),
             # Weaving paths
-            "Zigzag":       lambda p, **kw: zigzag(tp, direction=p.get("direction", "forward"), track=track, **kw),
-            "Slalom":       lambda p, **kw: slalom(tp, direction=p.get("direction", "forward"), **kw),
-            "WagWalk":      lambda p, **kw: wag_walking(tp, **kw),
+            "Zigzag":       lambda p, **kw: zigzag(self._twist_pub,
+                                direction=p.get("direction", "forward"), track=track, **kw),
+            "Slalom":       lambda p, **kw: slalom(self._twist_pub,
+                                direction=p.get("direction", "forward"), **kw),
+            "WagWalk":      lambda p, **kw: wag_walking(self._twist_pub, **kw),
             # Arc / circle
-            "Arc":          lambda p, **kw: drive_arc(tp, direction=p.get("direction", "left"),
-                                radius=p.get("radius", 0.5), angle=math.radians(p.get("angle", 180)), **kw),
-            "TeacupSpin":   lambda p, **kw: teacup_spin(tp, side=p.get("side", "left"), **kw),
-            "TeacupCircle": lambda p, **kw: teacup(tp, direction=p.get("direction", "left"), **kw),
+            "Arc":          lambda p, **kw: drive_arc(self._twist_pub,
+                                direction=p.get("direction", "left"),
+                                radius=p.get("radius", 0.5),
+                                angle=math.radians(p.get("angle", 180)), **kw),
+            "TeacupSpin":   lambda p, **kw: teacup_spin(self._twist_pub,
+                                side=p.get("side", "left"), **kw),
+            "TeacupCircle": lambda p, **kw: teacup(self._twist_pub,
+                                direction=p.get("direction", "left"), **kw),
             # Complex paths
-            "Spiral":       lambda p, **kw: spiral(tp, direction=p.get("direction", "left"), **kw),
-            "FigureEight":  lambda p, **kw: figure_eight(tp, **kw),
-            "Flower":       lambda p, **kw: flower(tp, **kw),
+            "Spiral":       lambda p, **kw: spiral(self._twist_pub,
+                                direction=p.get("direction", "left"), **kw),
+            "FigureEight":  lambda p, **kw: figure_eight(self._twist_pub, **kw),
+            "Flower":       lambda p, **kw: flower(self._twist_pub, **kw),
+            # Layer 1 additions
+            "Pacing":       lambda p, **kw: pacing(self._twist_pub,
+                                distance=p.get("distance", 0.5),
+                                step_duration=p.get("step_duration", 1.0),
+                                repetitions=p.get("repetitions", 4),
+                                pause_duration=p.get("pause_duration", 0.3),
+                                **kw),
+            "SuddenStop":   lambda p, **kw: sudden_stop(self._twist_pub,
+                                direction=p.get("direction", "forward"),
+                                max_speed=p.get("max_speed", 0.6),
+                                run_duration=p.get("run_duration", 0.4),
+                                brake_times=p.get("brake_times", 8),
+                                **kw),
+            "ChaineTurns":  lambda p, **kw: chaine_turns(self._twist_pub,
+                                turns=p.get("turns", 2.0),
+                                half_turn_duration=p.get("half_turn_duration", 0.8),
+                                track=track,
+                                **kw),
         }
 
     # ── RobotPlatform interface ──────────────────────────────────────────────
@@ -145,19 +206,35 @@ class DiffDrivePlatform(RobotPlatform):
         if move_name not in self._move_registry:
             return False
 
-        # Translate MoveContext into dancer vocabulary kwargs
-        kwargs = self._context_to_kwargs(context)
+        # Translate dance vocabulary in params (e.g. "3 o'clock" → direction="right")
+        params = translate_params(context.params) if context.params else {}
 
-        # §1: Pre-roll — preparatory micro-movement
-        if context.enable_pre_roll:
-            self.pre_roll(move_name, context)
+        # Extract environment modulation params (consumed here, not forwarded to move fn)
+        env_bias = float(params.pop("env_bias", 0.0))
+        env_resistance = float(params.pop("env_resistance", 0.0))
 
-        # Execute the move with params
-        self._move_registry[move_name](context.params, **kwargs)
+        # Temporarily apply environmental forces via publisher proxy.
+        # Because lambdas in _move_registry reference self._twist_pub at call time,
+        # swapping the attribute here is sufficient — no registry rebuild needed.
+        real_pub = self._twist_pub
+        if env_bias != 0.0 or env_resistance != 0.0:
+            self._twist_pub = _EnvPublisher(real_pub, env_bias, env_resistance)
 
-        # §3: Active brake — freeze as tension
-        if context.enable_active_brake:
-            self.active_brake(context)
+        try:
+            kwargs = self._context_to_kwargs(context)
+
+            # §1: Pre-roll — preparatory micro-movement
+            if context.enable_pre_roll:
+                self.pre_roll(move_name, context)
+
+            # Execute the move with translated params
+            self._move_registry[move_name](params, **kwargs)
+
+            # §3: Active brake — freeze as tension
+            if context.enable_active_brake:
+                self.active_brake(context)
+        finally:
+            self._twist_pub = real_pub  # always restore original publisher
 
         return True
 
@@ -267,17 +344,24 @@ class DiffDrivePlatform(RobotPlatform):
                              "note": "displacement depends on direction param"},
             "FigureEight":  {"dx": 0.0, "dy": 0.0, "dtheta": 0.0,  "radius": 1.0, "returns": True},
             "Flower":       {"dx": 0.0, "dy": 0.0, "dtheta": 0.0,  "radius": 1.6, "returns": True},
+            # Layer 1 additions
+            "Pacing":       {"dx": 0.0, "dy": 0.0, "dtheta": 0.0,  "radius": 0.5, "returns": True,
+                             "note": "one full out-and-back cycle per repetition"},
+            "SuddenStop":   {"dx": 0.3, "dy": 0.0, "dtheta": 0.0,  "radius": 0.3, "returns": False,
+                             "note": "dx depends on direction: forward +0.3m, backward -0.3m"},
+            "ChaineTurns":  {"dx": 0.0, "dy": 0.0, "dtheta": 2*pi, "radius": 0.6, "returns": True,
+                             "note": "net displacement small; alternating CCW half-turns"},
         }
 
     def get_move_categories(self) -> dict[str, list[str]]:
         return {
             "social":     ["Glance", "Bow"],
-            "linear":     ["Step", "Glide", "WagWalk"],
+            "linear":     ["Step", "Glide", "WagWalk", "Pacing"],
             "weaving":    ["Zigzag", "Slalom"],
-            "spin":       ["Spin", "Pirouette"],
+            "spin":       ["Spin", "Pirouette", "ChaineTurns"],
             "arc":        ["Arc", "TeacupSpin", "TeacupCircle"],
             "complex":    ["Spiral", "FigureEight", "Flower"],
-            "percussive": ["Tap"],
+            "percussive": ["Tap", "SuddenStop"],
             "expressive": ["Shimmy", "Pulse", "Vibrate"],
         }
 
