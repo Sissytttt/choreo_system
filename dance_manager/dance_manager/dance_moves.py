@@ -908,6 +908,126 @@ def wag_walking(
     _brake(twist_pub, direction=-1)
 
 
+# ── Missing Primitives ────────────────────────────────────────────────────────
+
+def pacing(
+    twist_pub,
+    distance=0.5,
+    step_duration=1.0,
+    repetitions=4,
+    pause_duration=0.3,
+    cmd_dt=0.05,
+    **kwargs
+):
+    """Patrol back and forth between two points at a steady pace.
+
+    Each repetition is one full out-and-back cycle: forward then backward.
+
+    Args:
+        distance (float): distance to travel each direction [m].
+        step_duration (float): time for each one-way leg [s]. Must be > 0.
+        repetitions (int): number of full back-and-forth cycles.
+        pause_duration (float): pause between each leg [s].
+    """
+    if step_duration <= 0:
+        raise ValueError("step_duration must be > 0")
+    if repetitions <= 0:
+        return
+
+    speed = distance / step_duration
+
+    for _ in range(repetitions):
+        glide(twist_pub, direction="forward",  duration=step_duration, speed=speed, cmd_dt=cmd_dt, **kwargs)
+        if pause_duration > 0:
+            time.sleep(pause_duration)
+        glide(twist_pub, direction="backward", duration=step_duration, speed=speed, cmd_dt=cmd_dt, **kwargs)
+        if pause_duration > 0:
+            time.sleep(pause_duration)
+
+
+def sudden_stop(
+    twist_pub,
+    direction="forward",
+    max_speed=0.6,
+    run_duration=0.4,
+    brake_times=8,
+    cmd_dt=0.05,
+    **kwargs
+):
+    """Sprint briefly then abruptly halt — creates tension and surprise.
+
+    Args:
+        direction (str): 'forward' or 'backward'.
+        max_speed (float): sprint velocity [m/s].
+        run_duration (float): how long to sprint before stopping [s].
+        brake_times (int): number of counter-pulse brake steps.
+    """
+    speed_scale, _, _ = _apply_vocab(kwargs, base_speed=max_speed, ramp_up=run_duration, ramp_down=run_duration)
+    v = max_speed * speed_scale
+    sign = -1.0 if direction.lower() == "backward" else 1.0
+
+    t = Twist()
+    end = time.time() + run_duration
+    while time.time() < end:
+        t.linear.x = v * sign
+        twist_pub.publish(t)
+        time.sleep(cmd_dt)
+
+    _brake(twist_pub, direction=-sign, times=brake_times)
+    _stop(twist_pub)
+
+
+def chaine_turns(
+    twist_pub,
+    turns=2.0,
+    half_turn_duration=0.8,
+    track=0.6,
+    cmd_dt=0.05,
+    **kwargs
+):
+    """Chaîné turns: alternating pivot half-turns, both CCW.
+
+    Each 180° half-turn uses a different wheel as the fixed pivot while
+    maintaining a consistent counter-clockwise rotation. Even halves:
+    left wheel fixed, right wheel drives forward. Odd halves: right wheel
+    fixed, left wheel drives backward. This preserves net CCW rotation
+    and produces a swirling traveling effect.
+
+    Args:
+        turns (float): number of full 360° turns (each full turn = 2 half-turns).
+        half_turn_duration (float): seconds to complete each 180° half-turn.
+        track (float): distance between wheels [m].
+    """
+    speed_scale, half_turn_duration, _ = _apply_vocab(
+        kwargs, base_speed=0.4, ramp_up=half_turn_duration, ramp_down=half_turn_duration)
+    half_turn_duration = half_turn_duration / max(speed_scale, 0.1)
+
+    total_halves = max(1, round(turns * 2))
+    w_mag = math.pi / half_turn_duration   # rad/s for 180° in half_turn_duration
+    v_mag = w_mag * track / 2.0            # linear speed for one-wheel-fixed geometry
+
+    t = Twist()
+    for i in range(total_halves):
+        if i % 2 == 0:
+            # Left wheel fixed (v_left=0), right wheel forward → CCW
+            lx = +v_mag
+        else:
+            # Right wheel fixed (v_right=0), left wheel backward → CCW
+            lx = -v_mag
+
+        end = time.time() + half_turn_duration
+        while time.time() < end:
+            t.linear.x = lx
+            t.angular.z = w_mag  # always positive (CCW)
+            twist_pub.publish(t)
+            time.sleep(cmd_dt)
+
+        _stop(twist_pub)
+        time.sleep(0.04)  # brief settle between half-turns
+
+    _stop(twist_pub)
+
+
 # ── Compound move (Layer 2 territory — kept here for server compatibility) ────
 
 def bow_sequence(twist_pub, cmd_dt=0.05, **kwargs):

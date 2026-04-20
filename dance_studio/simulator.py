@@ -40,6 +40,9 @@ DISPLACEMENTS = {
     "Spiral":       {"dx": 0.5, "dy": 0.5, "dtheta": 2 * pi,   "radius": 1.5,  "returns": False},
     "FigureEight":  {"dx": 0.0, "dy": 0.0, "dtheta": 0.0,      "radius": 1.0,  "returns": True},
     "Flower":       {"dx": 0.0, "dy": 0.0, "dtheta": 0.0,      "radius": 1.6,  "returns": True},
+    "Pacing":       {"dx": 0.0, "dy": 0.0, "dtheta": 0.0,      "radius": 0.5,  "returns": True},
+    "SuddenStop":   {"dx": 0.3, "dy": 0.0, "dtheta": 0.0,      "radius": 0.3,  "returns": False},
+    "ChaineTurns":  {"dx": 0.0, "dy": 0.0, "dtheta": 2 * pi,   "radius": 0.6,  "returns": True},
 }
 
 # Move categories for grouping in the UI and choreography logic.
@@ -50,8 +53,10 @@ CATEGORIES = {
     "spin":       ["Spin", "Pirouette"],
     "arc":        ["Arc", "TeacupSpin", "TeacupCircle"],
     "complex":    ["Spiral", "FigureEight", "Flower"],
-    "percussive": ["Tap"],
+    "percussive": ["Tap", "SuddenStop"],
     "expressive": ["Shimmy", "Pulse", "Vibrate"],
+    "linear":     ["Step", "Glide", "WagWalk", "Pacing"],
+    "spin":       ["Spin", "Pirouette", "ChaineTurns"],
 }
 
 # Human-readable description of the simulated platform.
@@ -161,6 +166,26 @@ def adjust_displacement(move_name, params, base_disp):
 # Motif expansion
 # ---------------------------------------------------------------------------
 
+_FLIP_MAP = {
+    "left": "right", "right": "left",
+    "forward": "backward", "backward": "forward",
+}
+
+
+def _flip_params(p):
+    """Return a copy of p with spatial direction params flipped."""
+    f = dict(p)
+    if "side" in f:
+        f["side"] = _FLIP_MAP.get(f["side"], f["side"])
+    if "direction" in f:
+        f["direction"] = _FLIP_MAP.get(f["direction"], f["direction"])
+    if "clockwise" in f:
+        f["clockwise"] = not bool(f["clockwise"])
+    if "angle" in f and isinstance(f["angle"], (int, float)):
+        f["angle"] = -f["angle"]
+    return f
+
+
 def expand_motifs(motifs_list, tempo_bpm):
     """Expand a list of motif dicts into a flat sequence of move tuples.
 
@@ -192,29 +217,67 @@ def expand_motifs(motifs_list, tempo_bpm):
         gap = float(motif.get("gap_before", 0.0))
 
         if modifier is None:
-            # No modifier — single copy.
             expanded.append((move_name, params, gap, energy, texture))
             continue
 
         mod_type = modifier.get("type", "")
         n = int(modifier.get("n", 2))
         factor = float(modifier.get("factor", 0.5))
+        mod_gap = float(modifier.get("gap", beat))
 
         if mod_type == "repeat":
-            # n identical copies separated by one beat.
             for i in range(n):
-                g = gap if i == 0 else beat
+                g = gap if i == 0 else mod_gap
                 expanded.append((move_name, params, g, energy, texture))
 
+        elif mod_type == "repeat_variation":
+            energy_delta = float(modifier.get("energy_delta", 0.1))
+            scale_delta = float(modifier.get("scale_delta", 0.0))
+            cur_energy = energy
+            cur_radius = params.get("radius")
+            for i in range(n):
+                g = gap if i == 0 else mod_gap
+                p = dict(params)
+                if cur_radius is not None:
+                    p["radius"] = max(0.05, cur_radius)
+                expanded.append((move_name, p, g, max(0.0, min(1.0, cur_energy)), texture))
+                cur_energy += energy_delta
+                if cur_radius is not None:
+                    cur_radius *= (1.0 + scale_delta)
+
         elif mod_type == "mirror":
-            # Two copies: first with side=left, second with side=right.
-            p_left = dict(params, side="left")
-            p_right = dict(params, side="right")
-            expanded.append((move_name, p_left, gap, energy, texture))
-            expanded.append((move_name, p_right, beat, energy, texture))
+            expanded.append((move_name, params, gap, energy, texture))
+            expanded.append((move_name, _flip_params(params), mod_gap, energy, texture))
+
+        elif mod_type == "direction_flip":
+            expanded.append((move_name, params, gap, energy, texture))
+            expanded.append((move_name, _flip_params(params), mod_gap, energy, texture))
+
+        elif mod_type == "invert":
+            inv_energy = max(0.0, min(1.0, 1.0 - energy))
+            inv_factor = float(modifier.get("factor", 1.0))
+            p2 = dict(params)
+            if "radius" in p2:
+                p2["radius"] = p2["radius"] * inv_factor
+            expanded.append((move_name, params, gap, energy, texture))
+            expanded.append((move_name, p2, mod_gap, inv_energy, texture))
+
+        elif mod_type == "reverse":
+            # No-op for single motif.
+            expanded.append((move_name, params, gap, energy, texture))
+
+        elif mod_type == "scale":
+            sp = dict(params)
+            for key in ("radius", "distance", "linear_speed", "max_speed"):
+                if key in sp:
+                    sp[key] = sp[key] * factor
+            expanded.append((move_name, sp, gap, energy, texture))
+
+        elif mod_type == "speed_modulate":
+            new_energy = max(0.0, min(1.0, energy * factor))
+            expanded.append((move_name, params, gap, new_energy, texture))
 
         elif mod_type == "decay":
-            # n copies with progressively increasing gap.
             current_gap = gap
             for i in range(n):
                 g = current_gap if i == 0 else current_gap
@@ -222,7 +285,6 @@ def expand_motifs(motifs_list, tempo_bpm):
                 current_gap += beat * (1.0 - factor)
 
         elif mod_type == "crescendo":
-            # n copies with progressively decreasing gap.
             current_gap = beat * n
             for i in range(n):
                 g = gap if i == 0 else current_gap
@@ -230,25 +292,26 @@ def expand_motifs(motifs_list, tempo_bpm):
                 current_gap = max(0.0, current_gap - beat)
 
         elif mod_type == "tension":
-            # Single copy with extra hold duration added to the gap.
             hold = float(modifier.get("hold_duration", beat * 2))
             expanded.append((move_name, params, gap + hold, energy, texture))
 
+        elif mod_type == "rhythm_shift":
+            gap_scale = float(modifier.get("gap_scale", 0.7))
+            expanded.append((move_name, params, gap * gap_scale, energy, texture))
+
         elif mod_type == "alternate":
-            # Interleave with another move.
             other_move = modifier.get("other_move", move_name)
             other_params = dict(modifier.get("other_params", {}))
             for i in range(n):
                 if i % 2 == 0:
-                    g = gap if i == 0 else beat
+                    g = gap if i == 0 else mod_gap
                     expanded.append((move_name, params, g, energy, texture))
                 else:
-                    expanded.append((other_move, other_params, beat, energy, texture))
+                    expanded.append((other_move, other_params, mod_gap, energy, texture))
 
         elif mod_type == "asymmetric_pause":
-            # n copies with alternating short / long gaps.
-            short_gap = beat * factor
-            long_gap = beat * (2.0 - factor)
+            short_gap = float(modifier.get("short", beat * 0.5))
+            long_gap = float(modifier.get("long", beat * 1.5))
             for i in range(n):
                 if i == 0:
                     g = gap
@@ -258,8 +321,17 @@ def expand_motifs(motifs_list, tempo_bpm):
                     g = long_gap
                 expanded.append((move_name, params, g, energy, texture))
 
+        elif mod_type == "drift":
+            angle_delta = float(modifier.get("angle_delta", 15.0))
+            p2 = dict(params)
+            p2["angle"] = p2.get("angle", 0.0) + angle_delta
+            expanded.append((move_name, p2, gap, energy, texture))
+
+        elif mod_type == "env_modulation":
+            # Env modulation is transparent to the simulator (physics not modelled).
+            expanded.append((move_name, params, gap, energy, texture))
+
         else:
-            # Unknown modifier — fall back to single copy.
             expanded.append((move_name, params, gap, energy, texture))
 
     return expanded
