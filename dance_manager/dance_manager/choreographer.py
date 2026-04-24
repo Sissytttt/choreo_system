@@ -114,35 +114,90 @@ class Motif:
 
 @dataclass
 class Phrase:
-    """An ordered list of Motifs forming a musical phrase or section.
+    """An ordered list of Motifs (or nested Phrases) forming a choreographic phrase.
+
+    A phrase is a breath of movement — it has a shape (build/sustain/release),
+    a spatial intention, and may have a group modifier applied to all its motifs.
+
+    motifs may contain Motif objects OR nested Phrase objects (for group operations
+    that span multiple moves, like mirroring A+B+C together).
 
     Attributes:
-        motifs: Ordered sequence of Motif objects.
-        name: Human-readable label (e.g. 'intro', 'chorus', 'bridge').
-        intent: WHY this phrase exists — the reason behind the movements.
-                Inspired by dancer thinking: "one causes another, or the echo effect."
-        gap_after: Seconds of stillness appended after the final motif.
+        motifs:    List of Motif | Phrase objects.
+        name:      Human-readable label.
+        intent:    WHY this phrase exists — the choreographic reason.
+        arc:       The phrase's dramatic shape:
+                   "build" (growing tension), "sustain" (holding the peak),
+                   "release" (letting go), "punctuate" (sharp accent),
+                   "question" (unresolved, reaching), "answer" (resolving).
+        spatial:   Intended spatial direction: "advance", "retreat", "circle",
+                   "diagonal", "stay".
+        gap_after: Seconds of stillness after the final motif.
+        modifier:  Optional group-level modifier applied to ALL motifs in this
+                   phrase as a unit.
     """
     motifs: list = field(default_factory=list)
     name: str = ""
     intent: str = ""
+    arc: str = ""
+    spatial: str = ""
+    gap_after: float = 0.0
+    modifier: Optional[dict] = None
+
+
+@dataclass
+class Section:
+    """A macro-structural unit — a group of phrases sharing a dramatic role.
+
+    A dance is organised into 3–5 sections (introduction, development,
+    climax, resolution, bridge, coda), each with a clear choreographic purpose.
+    Sections give the LLM a framework to think at the level of dramatic arc
+    rather than individual moves.
+
+    Attributes:
+        name:         Human-readable section title.
+        role:         Dramatic role: "introduction" | "development" | "climax" |
+                      "resolution" | "bridge" | "coda".
+        intention:    The choreographic purpose of this section (one sentence).
+        effort:       Laban effort qualities dict:
+                      {"weight": "strong"|"light", "time": "sudden"|"sustained",
+                       "flow": "free"|"bound"}
+        spatial_path: The robot's spatial journey: "circular", "advance",
+                      "retreat", "diagonal", "stay", "return".
+        phrases:      List of Phrase objects in this section.
+        gap_after:    Seconds of stillness after the last phrase of the section.
+    """
+    name: str = ""
+    role: str = ""
+    intention: str = ""
+    effort: dict = field(default_factory=dict)
+    spatial_path: str = ""
+    phrases: list = field(default_factory=list)
     gap_after: float = 0.0
 
 
 @dataclass
 class Sequence:
-    """A complete choreographic sequence with metadata.
+    """A complete choreographic score with macro structure and metadata.
 
     Attributes:
-        phrases: Ordered list of Phrase objects.
-        title: Human-readable title of the dance.
-        tempo_bpm: Musical tempo used to scale gap timing globally.
-        mood: Single expressive descriptor (e.g. 'playful', 'dramatic', 'dreamy').
-        description: Free-text summary of the choreographic intention.
+        sections:     Ordered list of Section objects (preferred — gives macro structure).
+        phrases:      Flat list of Phrase objects (backward-compat, used when no sections).
+        title:        Human-readable title of the dance.
+        tempo_bpm:    Musical tempo used to scale gap timing globally.
+        form:         Choreographic form: "ABA", "rondo", "theme-variations",
+                      "through-composed", "free".
+        energy_arc:   The energy/tension journey: "arch", "wave", "rising",
+                      "falling", "flat".
+        mood:         Single expressive descriptor (e.g. 'playful', 'dramatic').
+        description:  One-sentence choreographic intention.
     """
+    sections: list = field(default_factory=list)
     phrases: list = field(default_factory=list)
     title: str = ""
     tempo_bpm: float = 120.0
+    form: str = "free"
+    energy_arc: str = "arch"
     mood: str = "neutral"
     description: str = ""
 
@@ -239,8 +294,7 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
     beat = 60.0 / max(1.0, sequence.tempo_bpm)
     memory = MotifMemory()
 
-    # Count total moves for motif memory recall timing
-    total_moves = sum(len(p.motifs) for p in sequence.phrases)
+    total_moves = 0  # updated after flattening sections below
     move_index = 0
 
     _FLIP_MAP = {
@@ -260,6 +314,121 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
         if "angle" in f and isinstance(f["angle"], (int, float)):
             f["angle"] = -f["angle"]
         return f
+
+    def _scale_params(p: dict, factor: float) -> dict:
+        s = dict(p)
+        for key in ("radius", "distance", "max_speed", "linear_speed"):
+            if key in s and isinstance(s[key], (int, float)):
+                s[key] = s[key] * factor
+        return s
+
+    def _apply_group_mod(items: list, mod: dict) -> list:
+        """Apply a modifier to a whole group of (move, params, gap, energy, texture) tuples."""
+        mtype = mod.get("type", "")
+        gap = mod.get("gap", beat)
+
+        if mtype == "mirror":
+            mirrored = [
+                (move, _flip_params(params), gap if i == 0 else g, energy, texture)
+                for i, (move, params, g, energy, texture) in enumerate(items)
+            ]
+            return list(items) + mirrored
+
+        elif mtype == "direction_flip":
+            flipped = [
+                (move, _flip_params(params), gap if i == 0 else g, energy, texture)
+                for i, (move, params, g, energy, texture) in enumerate(items)
+            ]
+            return list(items) + flipped
+
+        elif mtype == "repeat":
+            n = mod.get("n", 2)
+            result = list(items)
+            for _ in range(n - 1):
+                result.extend(
+                    (move, params, gap if i == 0 else g, energy, texture)
+                    for i, (move, params, g, energy, texture) in enumerate(items)
+                )
+            return result
+
+        elif mtype == "repeat_variation":
+            n = mod.get("n", 3)
+            e_delta = mod.get("energy_delta", 0.1)
+            result = []
+            for rep in range(n):
+                for i, (move, params, g, energy, texture) in enumerate(items):
+                    new_e = max(0.0, min(1.0, energy + rep * e_delta))
+                    new_g = gap if (rep > 0 and i == 0) else g
+                    result.append((move, params, new_g, new_e, texture))
+            return result
+
+        elif mtype == "invert":
+            return [
+                (move, params, g, max(0.0, min(1.0, 1.0 - energy)), texture)
+                for move, params, g, energy, texture in items
+            ]
+
+        elif mtype == "scale":
+            factor = mod.get("factor", 0.5)
+            return [
+                (move, _scale_params(params, factor), g, energy, texture)
+                for move, params, g, energy, texture in items
+            ]
+
+        elif mtype == "speed_modulate":
+            factor = mod.get("factor", 1.5)
+            return [
+                (move, params, g, max(0.0, min(1.0, energy * factor)), texture)
+                for move, params, g, energy, texture in items
+            ]
+
+        elif mtype == "crescendo":
+            n = mod.get("n", 2)
+            factor = mod.get("factor", 1.3)
+            inter_gap = beat * (n - 1) * (factor - 1.0) * 0.5
+            result = []
+            for rep in range(n):
+                gap_val = max(0.0, inter_gap - rep * beat * (factor - 1.0))
+                result.extend(
+                    (move, params, gap_val if (rep > 0 and i == 0) else g, energy, texture)
+                    for i, (move, params, g, energy, texture) in enumerate(items)
+                )
+            return result
+
+        elif mtype == "decay":
+            n = mod.get("n", 2)
+            factor = mod.get("factor", 0.7)
+            decay_gap = 0.0
+            result = []
+            for rep in range(n):
+                result.extend(
+                    (move, params, max(0.0, decay_gap) if (rep > 0 and i == 0) else g, energy, texture)
+                    for i, (move, params, g, energy, texture) in enumerate(items)
+                )
+                decay_gap += beat * (1.0 - factor)
+            return result
+
+        elif mtype == "tension":
+            hold = mod.get("hold_duration", beat * 2)
+            if not items:
+                return items
+            move, params, g, energy, texture = items[0]
+            return [(move, params, g + hold, energy, texture)] + list(items[1:])
+
+        return list(items)  # unknown modifier → pass through
+
+    def _expand_items(items: list) -> list:
+        """Recursively expand Motif | Phrase items into flat (move, params, gap, energy, texture) tuples."""
+        flat = []
+        for item in items:
+            if isinstance(item, Phrase):
+                sub = _expand_items(item.motifs)
+                if item.modifier:
+                    sub = _apply_group_mod(sub, item.modifier)
+                flat.extend(sub)
+            else:  # Motif
+                flat.extend(_expand(item))
+        return flat
 
     def _expand(motif: Motif) -> list:
         """Expand one Motif into a list of (move_name, params, gap_before, energy, texture) tuples."""
@@ -403,28 +572,46 @@ def run_sequence(action_client, sequence: Sequence, stage_tracker=None) -> None:
         action_client.send_goal_and_wait(move_name, energy, texture,
                                          params=params or {})
 
-    for phrase in sequence.phrases:
+    # Flatten sections → phrases (sections take priority over flat phrases list)
+    all_phrases = []
+    for section in sequence.sections:
+        if section.name:
+            print(f"[Choreographer] ═══ Section: {section.name} ({section.role}) ═══")
+            if section.intention:
+                print(f"[Choreographer]   Intention: {section.intention}")
+        all_phrases.extend(section.phrases)
+        if section.gap_after > 0.0:
+            # Insert sentinel phrase for section gap
+            all_phrases.append(Phrase(gap_after=section.gap_after))
+    if not all_phrases:
+        all_phrases = sequence.phrases
+
+    for phrase in all_phrases:
         if phrase.name:
+            arc_str = f" [{phrase.arc}]" if phrase.arc else ""
             intent_str = f" — {phrase.intent}" if phrase.intent else ""
-            print(f"[Choreographer] Phrase: {phrase.name}{intent_str}")
-        for motif in phrase.motifs:
-            expanded = _expand(motif)
-            for move_name, params, gap, energy, texture in expanded:
-                if gap > 0.0:
-                    time.sleep(gap)
-                params_str = f" {params}" if params else ""
-                if motif.annotation:
-                    print(f"[Choreographer]   {move_name}{params_str} (e={energy:.1f} t={texture})  # {motif.annotation}")
-                else:
-                    print(f"[Choreographer]   {move_name}{params_str} (e={energy:.1f} t={texture})")
+            print(f"[Choreographer] Phrase: {phrase.name}{arc_str}{intent_str}")
 
-                translated = _translate_params(params, tempo_bpm=sequence.tempo_bpm)
-                _send_goal(move_name, translated, energy, texture)
-                memory.record(move_name)
-                move_index += 1
+        # Recursively expand all items (Motif | nested Phrase groups)
+        phrase_expanded = _expand_items(phrase.motifs)
 
-                if stage_tracker is not None:
-                    stage_tracker.log_position(label=move_name)
+        # Apply phrase-level group modifier (e.g. seq_mirror wrapping the whole phrase)
+        if phrase.modifier:
+            phrase_expanded = _apply_group_mod(phrase_expanded, phrase.modifier)
+
+        for move_name, params, gap, energy, texture in phrase_expanded:
+            if gap > 0.0:
+                time.sleep(gap)
+            params_str = f" {params}" if params else ""
+            print(f"[Choreographer]   {move_name}{params_str} (e={energy:.1f} t={texture})")
+
+            translated = _translate_params(params, tempo_bpm=sequence.tempo_bpm)
+            _send_goal(move_name, translated, energy, texture)
+            memory.record(move_name)
+            move_index += 1
+
+            if stage_tracker is not None:
+                stage_tracker.log_position(label=move_name)
 
         if phrase.gap_after > 0.0:
             time.sleep(phrase.gap_after)
@@ -460,32 +647,35 @@ class AIChoreographer:
     ]
 
     MODIFIER_SCHEMA = """\
-modifier (optional, null for no modifier):
-  Repetition & Pattern
-  { "type": "repeat",            "n": <int>,   "gap": <float> }
-  { "type": "repeat_variation",  "n": <int>,   "energy_delta": <float>, "scale_delta": <float>, "gap": <float> }
-  { "type": "alternate",         "other_move": "<move_name>", "n": <int>, "gap": <float> }
-  { "type": "asymmetric_pause",  "short": <float>, "long": <float>, "n": <int> }
-  Transformation
-  { "type": "mirror",            "gap": <float> }
-  { "type": "direction_flip",    "gap": <float> }
-  { "type": "invert",            "factor": <float> }
-  Parametric & Dynamic Modulation
-  { "type": "scale",             "factor": <float> }
-  { "type": "speed_modulate",    "factor": <float> }
-  { "type": "decay",             "n": <int>,   "factor": <float 0-1> }
-  { "type": "crescendo",         "n": <int>,   "factor": <float >1> }
-  { "type": "tension",           "hold_duration": <float> }
-  { "type": "rhythm_shift",      "gap_scale": <float> }
-  Organic Variation
-  { "type": "drift",             "angle_delta": <float degrees> }
-  { "type": "env_modulation",    "env_bias": <float rad/s>, "env_resistance": <float 0-1> }\
+Motif-level modifier (optional, null for no modifier):
+  Repetition — make a move recur:
+    {"type":"repeat",           "n":<int>,  "gap":<float s between repeats>}
+    {"type":"repeat_variation", "n":<int>,  "energy_delta":<float>, "gap":<float>}
+    {"type":"alternate",        "other_move":"<name>", "n":<int>, "gap":<float>}
+    {"type":"asymmetric_pause", "short":<float>, "long":<float>, "n":<int>}
+  Spatial transformation — flip direction or size:
+    {"type":"mirror",           "gap":<float>}
+    {"type":"direction_flip",   "gap":<float>}
+    {"type":"scale",            "factor":<float, e.g. 0.5=half size>}
+  Dynamic shaping — change energy or timing:
+    {"type":"speed_modulate",   "factor":<float, >1=faster>}
+    {"type":"crescendo",        "n":<int>,  "factor":<float >1>}
+    {"type":"decay",            "n":<int>,  "factor":<float 0-1>}
+    {"type":"tension",          "hold_duration":<float s, pause before move>}
+    {"type":"rhythm_shift",     "gap_scale":<float>}
+  Organic — subtle drift:
+    {"type":"drift",            "angle_delta":<float degrees>}
+
+Phrase-level modifier (applies to ALL motifs in a phrase as a unit):
+  Same format — use when a structural operation (repeat, mirror, crescendo)
+  should apply to the whole phrase, not a single move.\
 """
 
     TEXTURE_OPTIONS = "neutral, honey, staccato, ice, cloud, magnet"
 
     SYSTEM_PROMPT_TEMPLATE = """\
-You are a choreographer for a dance robot. \
+You are an expert dance choreographer programming a robot dancer. \
+Think like a choreographer, not a programmer. \
 Generate dance sequences as strict JSON — no prose, no markdown fences.
 
 ━━ Robot platform ━━
@@ -495,89 +685,199 @@ Generate dance sequences as strict JSON — no prose, no markdown fences.
 {move_list}
 
 ━━ Expressive parameters ━━
-energy      float 0–1   0=restrained/slow, 0.5=normal, 1=explosive/fast
+energy      float 0–1   0=restrained/slow, 0.5=moderate, 1=explosive/fast
 texture     string      one of: {texture_options}
-            neutral  = balanced acceleration
-            honey    = viscous, high damping, slow onset, smooth
-            staccato = percussive, instant torque, abrupt stops
-            ice      = frictionless, minimal damping, gliding
-            cloud    = floaty, gentle, airy, exponential curves
-            magnet   = push-pull attraction/repulsion dynamics
-gap_before  float [s]   pause before this move (0=bound/staccato, 0.8=free/suspended)
+            neutral  = balanced, clean motion
+            honey    = viscous, slow onset, high damping — sustained, weighty movement
+            staccato = instant torque, abrupt stops — sharp, percussive, accented
+            ice      = frictionless gliding, minimal damping — smooth, continuous flow
+            cloud    = floaty, gentle, airy, exponential ramp — light, ethereal movement
+            magnet   = push-pull dynamics — elastic, magnetic attraction/repulsion
+gap_before  float [s]   silence before this move: 0=bound (tight), 0.5-1.5=suspended (free)
+
+━━ Choreographic form ━━
+Every dance needs a macro-structure. Choose the form that fits the intention:
+  ABA             Intro (A) → Development/contrast (B) → Return/resolution (A')
+                  Most satisfying — gives closure by returning to where you started.
+  Rondo           A→B→A→C→A — a theme returns between contrasting episodes.
+                  Creates familiarity and surprise alternately.
+  Theme+Variations  Establish a signature movement, then systematically transform it.
+                  Lets the audience learn one idea and watch it evolve.
+  Through-composed  Continuous development, never exactly repeating.
+                  For narrative journeys with a clear beginning, middle, end.
+  Free              Organized by dramatic arc alone, no fixed return.
+
+━━ Dramatic arc (energy_arc) ━━
+The energy/tension journey across the WHOLE dance:
+  arch     low → rise → single peak → fall back. Most natural, satisfying.
+  wave     multiple peaks and valleys — for playful, oscillating pieces.
+  rising   builds continuously from start to end — for celebratory, triumphant pieces.
+  falling  starts at peak, winds down — for melancholy, ending pieces.
+  flat     consistent energy — for meditative, trance-like pieces (rare).
+
+━━ Section roles ━━
+Organise the dance into 3–5 sections. Each section has a clear dramatic role:
+  introduction   Establish personality and mood. Moderate energy. Set the world.
+  development    Build tension. Explore and transform the opening material.
+  climax         The ONE peak moment. Maximum energy, commitment, and surprise.
+  resolution     Wind down. Return to calm. Create closure. Echo of introduction.
+  bridge         A contrasting episode (in Rondo/ABA). Different quality.
+  coda           A brief final statement. Very low energy. Last impression.
+
+━━ Effort qualities (Laban Movement Analysis) ━━
+Each section has an overall effort quality that drives move and texture choices:
+  weight: "strong" (powerful, large, committed) vs "light" (delicate, small, tentative)
+  time:   "sudden" (sharp, accented, staccato texture) vs "sustained" (flowing, honey/cloud)
+  flow:   "free" (abandoned, large gaps ok) vs "bound" (controlled, tight gaps)
+
+Effort → texture/energy guide:
+  strong + sudden + free   → energy 0.8-1.0, staccato, gaps 0.5-1.0s  (explosive, abandoned)
+  strong + sudden + bound  → energy 0.7-0.9, staccato, gaps 0-0.3s    (powerful precision)
+  strong + sustained + free → energy 0.6-0.8, honey or ice, gaps 0.3-0.8s (powerful flow)
+  light + sudden + bound   → energy 0.3-0.6, staccato, gaps 0-0.2s   (playful, light-footed)
+  light + sustained + free → energy 0.1-0.4, cloud, gaps 0.5-1.5s    (floaty, dreamy)
+  light + sustained + bound → energy 0.2-0.5, honey, gaps 0-0.3s     (delicate, careful)
+
+━━ Seven choreographic principles ━━
+
+1. CONTRAST is the engine of interest.
+   Adjacent sections/phrases must contrast in at least one dimension.
+   After explosive staccato → give sustained honey. After advancing → retreat.
+   Without contrast, the dance is monotonous regardless of how complex it is.
+
+2. REPETITION creates meaning; VARIATION creates life.
+   Repeat a move or motif 2-3 times to make it recognizable and give it weight.
+   Then vary it (energy, direction, size, texture) to show development.
+   A-A-A-B pattern: repeat 3 times identically, break the pattern on the 4th → surprise.
+
+3. STILLNESS is the most powerful choreographic tool.
+   A pause before a big move creates anticipation. Silence after a climax creates resonance.
+   Use gap_before 0.8-1.5s before your climax moves.
+   Choreograph the stillness — it is not empty space, it is held intention.
+
+4. EVERY PHRASE HAS A SHAPE (arc).
+   "build": preparation, growing tension — moves get slightly larger/faster
+   "sustain": holding the peak — repeat the climax quality
+   "release": letting go, resolution — energy drops, texture softens
+   "punctuate": sharp exclamation or accent — brief, high energy, then silence
+   "question": unresolved, reaching outward — ends on open move (Glance, Pacing)
+   "answer": resolving a previous question — ends with commitment (Bow, Spiral)
+
+5. THE CLIMAX is ONE moment, not a sustained plateau.
+   Build steadily toward ONE peak phrase. Don't have multiple equal peaks — it flattens drama.
+   The climax phrase: highest energy, most committed moves, tension modifier before it.
+   After the climax: immediate contrast (low energy, long gap_after, soft texture).
+
+6. SPATIAL JOURNEY matters choreographically.
+   The robot's path through space is part of the expression, not just a byproduct of moves.
+   Use spatial_path to show intention:
+     circular  = exploration, searching, self-contained
+     advance   = confidence, assertion, engagement
+     retreat   = withdrawal, introspection, vulnerability
+     diagonal  = dynamic, unexpected, breaking the grid
+     return    = closure, memory, coming home
+
+7. ENDINGS matter as much as beginnings.
+   Mirror the opening to create closure (ABA works because the return gives meaning to the middle).
+   End with low energy, a Bow, or a held stillness.
+   The last 5 seconds is what the audience remembers.
 
 ━━ Modifiers ━━
 {modifier_schema}
+
+━━ Nested groups (for group operations on multiple moves) ━━
+An item in "motifs" can be a nested group — useful when a structural operation
+(mirror, repeat, crescendo) should apply to MULTIPLE moves together, not just one.
+
+  Mirror a group of moves:
+  {{"motifs": [A, B, C], "modifier": {{"type":"mirror","gap":0.4}}}}
+  → plays A,B,C forward then A,B,C mirrored (directions flipped)
+
+  Repeat a group with growing energy:
+  {{"motifs": [A, B], "modifier": {{"type":"repeat_variation","n":3,"energy_delta":0.15}}}}
+
+Use nested groups WHEN the structure genuinely serves the choreographic idea.
+Do not nest purely for complexity — simple is often more expressive.
 
 ━━ Output JSON schema ━━
 {{
   "title": "<string>",
   "tempo_bpm": <number 60–160>,
+  "form": "<ABA|rondo|theme-variations|through-composed|free>",
+  "energy_arc": "<arch|wave|rising|falling|flat>",
   "mood": "<string>",
-  "description": "<string>",
-  "phrases": [
+  "description": "<one sentence choreographic intention>",
+  "sections": [
     {{
       "name": "<string>",
-      "intent": "<string — WHY this phrase exists>",
+      "role": "<introduction|development|climax|resolution|bridge|coda>",
+      "intention": "<string — choreographic purpose of this section>",
+      "effort": {{"weight":"<strong|light>","time":"<sudden|sustained>","flow":"<free|bound>"}},
+      "spatial_path": "<circular|advance|retreat|diagonal|stay|return>",
       "gap_after": <float>,
-      "motifs": [
+      "phrases": [
         {{
-          "move": "<MOVE_NAME>",
-          "params": {{<move-specific params or empty object>}},
-          "energy": <float>,
-          "texture": "<texture_name>",
-          "gap_before": <float>,
-          "modifier": <modifier object or null>,
-          "annotation": "<string>"
+          "name": "<string>",
+          "arc": "<build|sustain|release|punctuate|question|answer>",
+          "intent": "<string — WHY this phrase exists>",
+          "spatial": "<advance|retreat|circle|diagonal|stay>",
+          "gap_after": <float>,
+          "modifier": <group modifier for whole phrase, or null>,
+          "motifs": [
+            <individual move OR nested group — see below>
+          ]
         }}
       ]
     }}
   ]
 }}
 
+━━ Motif formats ━━
+Individual move:
+{{
+  "move": "<MOVE_NAME>",
+  "params": {{<move-specific params or {{}}>}},
+  "energy": <float 0-1>,
+  "texture": "<texture_name>",
+  "gap_before": <float>,
+  "modifier": <motif-level modifier or null>,
+  "annotation": "<string, under 50 chars>"
+}}
+
+Nested group (for group structural operations):
+{{
+  "motifs": [<individual moves...>],
+  "modifier": <modifier applied to the group as a unit>,
+  "intent": "<optional: why this group>"
+}}
+
 ━━ Move parameters ━━
-Moves accept an optional "params" object with move-specific arguments:
-  Step:         {{"direction": "forward"|"backward"}}
-  Glide:        {{"direction": "forward"|"backward"}}
-  Spin:         {{"angle": <degrees, positive=CCW, negative=CW. e.g. 90, -180, 360>}}
-  Arc:          {{"direction": "left"|"right", "angle": <degrees, default 180>}}
-  Tap:          {{"side": "left"|"right"}}
-  Pirouette:    {{"side": "left"|"right"}}
-  Zigzag:       {{"direction": "forward"|"backward"}}
-  Slalom:       {{"direction": "forward"|"backward"}}
-  TeacupSpin:   {{"side": "left"|"right"}}
-  TeacupCircle: {{"direction": "left"|"right"}}
-  Spiral:       {{"direction": "left"|"right"}}
-  Pacing:       {{"distance": <m>, "step_duration": <s>, "repetitions": <int>, "pause_duration": <s>}}
-  SuddenStop:   {{"direction": "forward"|"backward", "max_speed": <m/s>, "run_duration": <s>}}
-  ChaineTurns:  {{"turns": <float>, "half_turn_duration": <s>}}
-  Glance, Bow, Shimmy, Pulse, Vibrate, WagWalk, FigureEight, Flower: no params needed (use {{}})
+  Step:         {{"direction":"forward"|"backward"}}
+  Glide:        {{"direction":"forward"|"backward"}}
+  Spin:         {{"angle":<degrees, +CCW/-CW, e.g. 90, -180, 360>}}
+  Arc:          {{"direction":"left"|"right","angle":<degrees, default 180>}}
+  Tap:          {{"side":"left"|"right"}}
+  Pirouette:    {{"side":"left"|"right"}}
+  Zigzag:       {{"direction":"forward"|"backward"}}
+  Slalom:       {{"direction":"forward"|"backward"}}
+  TeacupSpin:   {{"side":"left"|"right"}}
+  TeacupCircle: {{"direction":"left"|"right"}}
+  Spiral:       {{"direction":"left"|"right"}}
+  Pacing:       {{"distance":<m>,"step_duration":<s>,"repetitions":<int>,"pause_duration":<s>}}
+  SuddenStop:   {{"direction":"forward"|"backward","max_speed":<m/s>,"run_duration":<s>}}
+  ChaineTurns:  {{"turns":<float>,"half_turn_duration":<s>}}
+  Glance, Bow, Shimmy, Pulse, Vibrate, WagWalk, FigureEight, Flower: {{}}
 
 {vocabulary_description}
 
-━━ Dancer design thinking guidelines ━━
-1. Organise into 3–5 named phrases (intro, buildup, climax, wind-down, outro).
-2. Each phrase needs an "intent" — the reason behind the movements.
-   Think about WHY: the music, the space, the previous movement, the inner emotion.
-3. Use texture to create movement quality:
-   — honey for flowing, sustained passages
-   — staccato for sharp, rhythmic accents
-   — cloud for gentle, floating sections
-   — ice for smooth gliding transitions
-4. Use the power of the pause: the most intense moment is often stillness.
-   Insert asymmetric pauses — they let the audience see the robot "deciding."
-5. Repetition + Deviation (A-A-A-B): repeat to build meaning, then break
-   the pattern on the 4th cycle to create surprise.
-6. Use tension modifier before dramatic or climactic moves.
-7. Use crescendo for a series that builds to a peak.
-8. Use decay for a series that winds down.
-9. Vary energy AND texture together for expressive contrast:
-   — low energy + honey = contemplative
-   — high energy + staccato = explosive
-   — low energy + cloud = ethereal
-10. Never invent move names — only use the list above.
-11. Budget for ~3–8 seconds per move. Total sequence: 30–120 s unless specified.
-12. Keep annotations short (under 50 chars). Do NOT embed position tracking in annotations.
-13. Return ONLY the JSON object. No markdown fences, no extra text.
+━━ Quality rules ━━
+- Budget ~3–8 seconds per move. Total dance: 30–120s unless specified.
+- Never invent move names — only use the list above.
+- Keep annotations under 50 chars.
+- Return ONLY the JSON object. No markdown fences, no extra text.
+- Every section should be distinctly different in effort quality from adjacent sections.
+- The climax section must have the highest energy of the whole dance.
+- The resolution section must have lower energy than the introduction.
 {stage_constraints}\
 """
 
@@ -755,37 +1055,76 @@ Moves accept an optional "params" object with move-specific arguments:
     def _dict_to_sequence(self, data: dict) -> Sequence:
         valid = set(self._get_available_moves())
         valid_textures = {"neutral", "honey", "staccato", "ice", "cloud", "magnet"}
-        phrases = []
-        for ph in data.get("phrases", []):
-            motifs = []
-            for m in ph.get("motifs", []):
-                move = m.get("move", "")
+
+        def _parse_item(item: dict):
+            """Parse a dict as either a Motif (has 'move') or a nested Phrase group (has 'motifs')."""
+            if "move" in item:
+                move = item.get("move", "")
                 if move not in valid:
-                    raise ValueError(
-                        f"Unknown move '{move}'. Valid moves: {sorted(valid)}"
-                    )
-                texture = str(m.get("texture", "neutral")).lower()
+                    raise ValueError(f"Unknown move '{move}'. Valid: {sorted(valid)}")
+                texture = str(item.get("texture", "neutral")).lower()
                 if texture not in valid_textures:
                     texture = "neutral"
-                motifs.append(Motif(
+                return Motif(
                     move=move,
-                    params=m.get("params", {}),
-                    energy=float(m.get("energy", 0.5)),
+                    params=item.get("params", {}),
+                    energy=float(item.get("energy", 0.5)),
                     texture=texture,
-                    gap_before=float(m.get("gap_before", 0.0)),
-                    modifier=m.get("modifier"),
-                    annotation=str(m.get("annotation", "")),
-                ))
-            phrases.append(Phrase(
-                motifs=motifs,
+                    gap_before=float(item.get("gap_before", 0.0)),
+                    modifier=item.get("modifier"),
+                    annotation=str(item.get("annotation", "")),
+                )
+            elif "motifs" in item:
+                sub_items = [_parse_item(sub) for sub in item.get("motifs", [])]
+                return Phrase(
+                    motifs=sub_items,
+                    name=str(item.get("name", "")),
+                    intent=str(item.get("intent", "")),
+                    arc=str(item.get("arc", "")),
+                    spatial=str(item.get("spatial", "")),
+                    gap_after=float(item.get("gap_after", 0.0)),
+                    modifier=item.get("modifier"),
+                )
+            else:
+                raise ValueError(f"Item must have 'move' or 'motifs' key: {list(item.keys())}")
+
+        def _parse_phrase(ph: dict) -> Phrase:
+            items = [_parse_item(it) for it in ph.get("motifs", [])]
+            return Phrase(
+                motifs=items,
                 name=str(ph.get("name", "")),
                 intent=str(ph.get("intent", "")),
+                arc=str(ph.get("arc", "")),
+                spatial=str(ph.get("spatial", "")),
                 gap_after=float(ph.get("gap_after", 0.0)),
+                modifier=ph.get("modifier"),
+            )
+
+        # Parse sections (new format) or fall back to flat phrases (old format)
+        sections = []
+        for sec in data.get("sections", []):
+            phrases = [_parse_phrase(ph) for ph in sec.get("phrases", [])]
+            sections.append(Section(
+                name=str(sec.get("name", "")),
+                role=str(sec.get("role", "")),
+                intention=str(sec.get("intention", "")),
+                effort=dict(sec.get("effort", {})),
+                spatial_path=str(sec.get("spatial_path", "")),
+                phrases=phrases,
+                gap_after=float(sec.get("gap_after", 0.0)),
             ))
+
+        flat_phrases = []
+        if not sections:
+            flat_phrases = [_parse_phrase(ph) for ph in data.get("phrases", [])]
+
         return Sequence(
-            phrases=phrases,
+            sections=sections,
+            phrases=flat_phrases,
             title=str(data.get("title", "")),
             tempo_bpm=float(data.get("tempo_bpm", 120.0)),
+            form=str(data.get("form", "free")),
+            energy_arc=str(data.get("energy_arc", "arch")),
             mood=str(data.get("mood", "neutral")),
             description=str(data.get("description", "")),
         )
@@ -793,26 +1132,54 @@ Moves accept an optional "params" object with move-specific arguments:
     def describe(self, sequence: Sequence) -> str:
         """Return a human-readable summary of a Sequence for debugging."""
         lines = [
-            f"Title: {sequence.title}",
-            f"Mood:  {sequence.mood}",
-            f"Tempo: {sequence.tempo_bpm} BPM",
-            f"Desc:  {sequence.description}",
+            f"Title:      {sequence.title}",
+            f"Form:       {sequence.form}  Energy arc: {sequence.energy_arc}",
+            f"Mood:       {sequence.mood}",
+            f"Tempo:      {sequence.tempo_bpm} BPM",
+            f"Intention:  {sequence.description}",
             "",
         ]
-        for phrase in sequence.phrases:
+
+        def _desc_phrase(phrase, indent="  "):
+            arc_str = f" [{phrase.arc}]" if phrase.arc else ""
             intent_str = f" — {phrase.intent}" if phrase.intent else ""
-            lines.append(f"[{phrase.name}]{intent_str}")
-            for motif in phrase.motifs:
-                mod_str = f"  mod={motif.modifier}" if motif.modifier else ""
-                note = f"  # {motif.annotation}" if motif.annotation else ""
-                lines.append(
-                    f"  {motif.move:<28} energy={motif.energy:.1f}"
-                    f"  texture={motif.texture}"
-                    f"  gap={motif.gap_before:.1f}s{mod_str}{note}"
-                )
+            lines.append(f"{indent}[{phrase.name}]{arc_str}{intent_str}")
+            for item in phrase.motifs:
+                if isinstance(item, Phrase):
+                    mod_str = f" mod={item.modifier}" if item.modifier else ""
+                    lines.append(f"{indent}  <group{mod_str}>")
+                    for sub in item.motifs:
+                        if isinstance(sub, Motif):
+                            lines.append(f"{indent}    {sub.move:<24} e={sub.energy:.1f} {sub.texture}")
+                else:  # Motif
+                    mod_str = f"  mod={item.modifier}" if item.modifier else ""
+                    note = f"  # {item.annotation}" if item.annotation else ""
+                    lines.append(
+                        f"{indent}  {item.move:<26} e={item.energy:.1f}"
+                        f"  {item.texture:<10}  gap={item.gap_before:.1f}s{mod_str}{note}"
+                    )
             if phrase.gap_after:
-                lines.append(f"  ... pause {phrase.gap_after:.1f}s")
-            lines.append("")
+                lines.append(f"{indent}  ··· pause {phrase.gap_after:.1f}s")
+
+        if sequence.sections:
+            for section in sequence.sections:
+                effort_str = " | ".join(f"{k}:{v}" for k, v in section.effort.items()) if section.effort else ""
+                lines.append(f"═══ {section.name.upper()} ({section.role}) ═══")
+                if section.intention:
+                    lines.append(f"  Intention: {section.intention}")
+                if effort_str:
+                    lines.append(f"  Effort: {effort_str}  Path: {section.spatial_path}")
+                lines.append("")
+                for phrase in section.phrases:
+                    _desc_phrase(phrase, indent="  ")
+                if section.gap_after:
+                    lines.append(f"  ··· section pause {section.gap_after:.1f}s")
+                lines.append("")
+        else:
+            for phrase in sequence.phrases:
+                _desc_phrase(phrase, indent="")
+                lines.append("")
+
         return "\n".join(lines)
 
 

@@ -13,8 +13,9 @@
 5. [真机运行](#4-真机运行)
 6. [Python API — 手写编排](#5-python-api--手写编排)
 7. [AI 编舞器 — 自然语言生成编舞](#6-ai-编舞器--自然语言生成编舞)
-8. [舞蹈术语参数表（dance vocabulary）](#7-舞蹈术语参数表dance-vocabulary)
-9. [Modifier 修饰符参考](#8-modifier-修饰符参考)
+8. [编舞结构概念速查](#7-编舞结构概念速查)
+9. [舞蹈术语参数表（dance vocabulary）](#8-舞蹈术语参数表dance-vocabulary)
+10. [Modifier 修饰符参考](#9-modifier-修饰符参考)
 
 ---
 
@@ -132,6 +133,61 @@ motifs2 = [{'move': 'Spin', 'params': {}, 'energy': 0.4, 'texture': 'staccato',
 r2 = expand_motifs(motifs2, 120)
 print(f'repeat_variation 能量: {[round(e,2) for _,_,_,e,_ in r2]}')
 # 期望: [0.4, 0.5, 0.6]
+"
+```
+
+### 1.4 测试 sections 格式的 simulate（新编舞结构）
+
+```bash
+python3 -c "
+import sys; sys.path.insert(0, 'dance_studio')
+from simulator import simulate
+
+seq = {
+  'tempo_bpm': 120,
+  'form': 'ABA',
+  'energy_arc': 'arch',
+  'sections': [
+    {
+      'name': 'introduction', 'role': 'introduction',
+      'effort': {'weight': 'light', 'time': 'sustained', 'flow': 'free'},
+      'gap_after': 0.5,
+      'phrases': [
+        {'name': 'opening', 'arc': 'build', 'gap_after': 0.3,
+         'motifs': [
+           {'move': 'Glance', 'energy': 0.2, 'texture': 'cloud', 'gap_before': 0.5, 'params': {}},
+           {'move': 'Pulse',  'energy': 0.35, 'texture': 'honey', 'gap_before': 0.3, 'params': {}}
+         ]}
+      ]
+    },
+    {
+      'name': 'climax', 'role': 'climax',
+      'effort': {'weight': 'strong', 'time': 'sudden', 'flow': 'free'},
+      'gap_after': 1.0,
+      'phrases': [
+        {'name': 'peak', 'arc': 'punctuate', 'gap_after': 0.5,
+         'motifs': [
+           {'move': 'Spin', 'energy': 0.95, 'texture': 'staccato',
+            'gap_before': 1.0, 'params': {'angle': 360}}
+         ]}
+      ]
+    },
+    {
+      'name': 'resolution', 'role': 'resolution',
+      'effort': {'weight': 'light', 'time': 'sustained', 'flow': 'bound'},
+      'gap_after': 0.0,
+      'phrases': [
+        {'name': 'bow', 'arc': 'release', 'gap_after': 0.0,
+         'motifs': [
+           {'move': 'Bow', 'energy': 0.25, 'texture': 'honey', 'gap_before': 0.5, 'params': {}}
+         ]}
+      ]
+    }
+  ]
+}
+result = simulate(seq)
+print(f'帧数: {len(result[\"frames\"])}  总时长: {result[\"total_duration\"]:.1f}s')
+print(f'动作边界: {[b[\"move_name\"] for b in result[\"move_boundaries\"]]}')
 "
 ```
 
@@ -368,6 +424,8 @@ python3 app.py
 
 不依赖 LLM，直接用代码构建 Sequence。在 Mac 本地运行（需要 stub ROS，无需 Docker）。
 
+### 5.1 基础结构（Section + Phrase + Motif）
+
 ```python
 import sys, types
 sys.path.insert(0, 'dance_manager')
@@ -382,46 +440,136 @@ geo_msg.Twist = Twist; geo.msg = geo_msg
 sys.modules['geometry_msgs'] = geo
 sys.modules['geometry_msgs.msg'] = geo_msg
 
-from dance_manager.choreographer import Motif, Phrase, Sequence
+from dance_manager.choreographer import Motif, Phrase, Section, Sequence
 from dance_manager.movement_modifiers import (
-    seq_crescendo, seq_mirror, seq_env_modulation, seq_repeat_variation
+    seq_crescendo, seq_mirror, seq_repeat_variation, seq_tension
 )
 
 sequence = Sequence(
-    title="Demo Sequence",
-    tempo_bpm=120.0,
-    mood="playful",
-    phrases=[
-        Phrase(name="intro", intent="greet", motifs=[
-            Motif("Glance", energy=0.4, texture="neutral"),
-            Motif("WagWalk", energy=0.5, params={"direction": "forward"}),
-        ]),
-        Phrase(name="build", intent="build energy", gap_after=0.5, motifs=[
-            Motif("Tap", params={"side": "right"}, modifier=seq_crescendo(n=4)),
-            Motif("Pirouette", params={"side": "left"}, modifier=seq_mirror(gap=0.3)),
-        ]),
-        Phrase(name="climax", intent="peak moment", motifs=[
-            Motif("Spin", params={"angle": 360}, energy=0.9, texture="staccato"),
-            Motif("SuddenStop", params={"max_speed": 0.6}, energy=1.0),
-            Motif("ChaineTurns", params={"turns": 2.0}, energy=0.8, texture="ice"),
-        ]),
-        Phrase(name="outro", motifs=[
-            Motif("Pacing", params={"distance": 0.4, "repetitions": 2},
-                  modifier=seq_env_modulation(bias=0.1, resistance=0.15)),
-            Motif("Bow", energy=0.3, texture="honey"),
-        ]),
+    title="Happy Dance",
+    tempo_bpm=128.0,
+    form="ABA",
+    energy_arc="arch",
+    mood="joyful",
+    description="Playful robot waking up, building to a joyful spin climax, settling to a bow",
+    sections=[
+        Section(
+            name="Introduction",
+            role="introduction",
+            intention="cautious curiosity — robot waking up, testing the space",
+            effort={"weight": "light", "time": "sustained", "flow": "free"},
+            spatial_path="circular",
+            gap_after=0.5,
+            phrases=[
+                Phrase(
+                    name="waking-up",
+                    arc="build",
+                    intent="first small movements, getting a feel for the space",
+                    spatial="circle",
+                    motifs=[
+                        Motif("Glance", energy=0.2, texture="cloud", gap_before=0.5),
+                        Motif("Pulse", energy=0.3, texture="honey", gap_before=0.3),
+                        Motif("WagWalk", energy=0.35, params={"direction": "forward"},
+                              texture="cloud"),
+                    ],
+                ),
+            ],
+        ),
+        Section(
+            name="Development",
+            role="development",
+            intention="growing confidence — movement gets bigger and more committed",
+            effort={"weight": "strong", "time": "sudden", "flow": "free"},
+            spatial_path="advance",
+            gap_after=0.8,
+            phrases=[
+                Phrase(
+                    name="building",
+                    arc="build",
+                    intent="A-A-A-B pattern: Tap repeats 3x then breaks into Zigzag",
+                    spatial="advance",
+                    gap_after=0.3,
+                    motifs=[
+                        Motif("Tap", params={"side": "right"}, energy=0.5,
+                              texture="staccato", modifier=seq_crescendo(n=3)),
+                        Motif("Zigzag", energy=0.65, texture="ice"),
+                    ],
+                ),
+                Phrase(
+                    name="contrast",
+                    arc="question",
+                    intent="soft contrast before the climax — builds anticipation",
+                    spatial="stay",
+                    gap_after=0.5,
+                    motifs=[
+                        Motif("Shimmy", energy=0.4, texture="honey", gap_before=0.3),
+                        Motif("Pirouette", params={"side": "left"}, energy=0.5,
+                              texture="cloud", modifier=seq_mirror(gap=0.4)),
+                    ],
+                ),
+            ],
+        ),
+        Section(
+            name="Climax",
+            role="climax",
+            intention="peak moment of joy — full commitment, maximum energy",
+            effort={"weight": "strong", "time": "sudden", "flow": "free"},
+            spatial_path="circular",
+            gap_after=1.5,
+            phrases=[
+                Phrase(
+                    name="peak",
+                    arc="punctuate",
+                    intent="the one peak — tension then explosion",
+                    spatial="circle",
+                    motifs=[
+                        # tension builds anticipation before the spin
+                        Motif("Spin", params={"angle": 360}, energy=0.95,
+                              texture="staccato", gap_before=1.0),
+                        Motif("ChaineTurns", params={"turns": 2.0}, energy=0.9,
+                              texture="ice"),
+                        Motif("SuddenStop", params={"max_speed": 0.6}, energy=1.0,
+                              texture="staccato"),
+                    ],
+                ),
+            ],
+        ),
+        Section(
+            name="Resolution",
+            role="resolution",
+            intention="winding down — echo of the opening, settling to stillness",
+            effort={"weight": "light", "time": "sustained", "flow": "bound"},
+            spatial_path="return",
+            gap_after=0.0,
+            phrases=[
+                Phrase(
+                    name="settling",
+                    arc="release",
+                    intent="contrast to climax — soft, slow, closing",
+                    spatial="retreat",
+                    gap_after=0.5,
+                    motifs=[
+                        Motif("Pacing", params={"distance": 0.3, "repetitions": 2},
+                              energy=0.25, texture="honey", gap_before=0.5),
+                        Motif("Glance", energy=0.2, texture="cloud", gap_before=0.3),
+                        Motif("Bow", energy=0.3, texture="honey"),
+                    ],
+                ),
+            ],
+        ),
     ],
 )
 
-import json
-print(json.dumps({
-    "title": sequence.title,
-    "tempo_bpm": sequence.tempo_bpm,
-    "phrases": [
-        {"name": p.name, "motifs": [m.move for m in p.motifs]}
-        for p in sequence.phrases
-    ]
-}, indent=2, ensure_ascii=False))
+# Preview the structure
+ai_mock = type('A', (), {'describe': lambda self, s: str(s)})()
+from dance_manager.choreographer import AIChoreographer
+print(f"Form: {sequence.form}  Arc: {sequence.energy_arc}")
+for section in sequence.sections:
+    print(f"\n[{section.role.upper()}] {section.name}")
+    print(f"  Intent: {section.intention}")
+    for phrase in section.phrases:
+        moves = [m.move for m in phrase.motifs if hasattr(m, 'move')]
+        print(f"  Phrase '{phrase.name}' [{phrase.arc}]: {moves}")
 ```
 
 运行：
@@ -429,6 +577,34 @@ print(json.dumps({
 ```bash
 cd /Users/sissytian/Desktop/choreo_system
 python3 your_script.py
+```
+
+### 5.2 组合式编舞表达（嵌套 Phrase 组）
+
+嵌套 `Phrase` 作为子组，对一组动作整体应用 modifier：
+
+```python
+from dance_manager.choreographer import Motif, Phrase, Section, Sequence
+from dance_manager.movement_modifiers import seq_mirror, seq_repeat_variation
+
+# 等价于：seq_repeat_variation(seq_mirror(A + B + C))
+mirror_group = Phrase(
+    modifier={"type": "mirror", "gap": 0.4},
+    intent="mirror the A-B-C group as a unit",
+    motifs=[
+        Motif("Step",   energy=0.5, texture="ice"),
+        Motif("Spin",   energy=0.6, texture="staccato", params={"angle": 90}),
+        Motif("Shimmy", energy=0.4, texture="honey"),
+    ],
+)
+
+phrase = Phrase(
+    name="mirrored-buildup",
+    arc="build",
+    intent="the mirrored group repeats 3 times with growing energy",
+    modifier={"type": "repeat_variation", "n": 3, "energy_delta": 0.15},
+    motifs=[mirror_group],
+)
 ```
 
 ---
@@ -455,15 +631,104 @@ class FakePlatform:
 
 ai = AIChoreographer(api_key=os.environ['GOOGLE_API_KEY'], platform=FakePlatform())
 seq = ai.generate('a slow curious patrol, then an explosive spin finish')
-print(seq)
+print(ai.describe(seq))
+print('Form:', seq.form, '  Arc:', seq.energy_arc)
+for section in seq.sections:
+    print(f'  [{section.role}] {section.name}: {section.intention}')
 "
 ```
 
-### 6.2 通过 Web Studio 生成（推荐）
+### 6.2 AI 输出格式（sections 结构）
+
+AI 现在返回包含 sections 的 JSON。示例输出（`"a happy dance"`）：
+
+```json
+{
+  "title": "Joyful Burst",
+  "tempo_bpm": 132,
+  "form": "ABA",
+  "energy_arc": "arch",
+  "mood": "joyful",
+  "description": "Playful awakening builds to explosive spinning joy then settles to a warm bow",
+  "sections": [
+    {
+      "name": "Awakening",
+      "role": "introduction",
+      "intention": "small curious movements, establishing playful personality",
+      "effort": {"weight": "light", "time": "sustained", "flow": "free"},
+      "spatial_path": "circular",
+      "gap_after": 0.5,
+      "phrases": [
+        {
+          "name": "first-steps",
+          "arc": "build",
+          "intent": "testing the space with growing confidence",
+          "spatial": "circle",
+          "gap_after": 0.3,
+          "modifier": null,
+          "motifs": [
+            {"move": "Glance", "energy": 0.2, "texture": "cloud", "gap_before": 0.5, "params": {}},
+            {"move": "Pulse",  "energy": 0.35, "texture": "honey", "gap_before": 0.3, "params": {},
+             "modifier": {"type": "repeat_variation", "n": 2, "energy_delta": 0.1}}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Climax",
+      "role": "climax",
+      "intention": "peak moment — full commitment and spinning joy",
+      "effort": {"weight": "strong", "time": "sudden", "flow": "free"},
+      "spatial_path": "circular",
+      "gap_after": 1.0,
+      "phrases": [
+        {
+          "name": "explosion",
+          "arc": "punctuate",
+          "intent": "the one peak — tension then release",
+          "spatial": "circle",
+          "gap_after": 0.5,
+          "modifier": null,
+          "motifs": [
+            {"move": "Spin", "energy": 0.95, "texture": "staccato", "gap_before": 1.0,
+             "params": {"angle": 360}},
+            {"move": "ChaineTurns", "energy": 0.85, "texture": "ice", "gap_before": 0.0,
+             "params": {"turns": 2.0}}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Resolution",
+      "role": "resolution",
+      "intention": "echo of opening — returning to warmth and stillness",
+      "effort": {"weight": "light", "time": "sustained", "flow": "bound"},
+      "spatial_path": "return",
+      "gap_after": 0.0,
+      "phrases": [
+        {
+          "name": "settling",
+          "arc": "release",
+          "intent": "soft contrast to climax — the robot comes home",
+          "spatial": "stay",
+          "gap_after": 0.0,
+          "modifier": null,
+          "motifs": [
+            {"move": "Shimmy", "energy": 0.3, "texture": "honey", "gap_before": 0.5, "params": {}},
+            {"move": "Bow",    "energy": 0.25, "texture": "honey", "gap_before": 0.3, "params": {}}
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 6.3 通过 Web Studio 生成（推荐）
 
 按照 [Section 3](#3-gazebo-3d-仿真--web-studio-完整流程docker--novnc) 启动完整流程后，直接在 http://localhost:8000 的 Generate 栏输入描述即可。
 
-### 6.3 命令行直接控制仿真（noVNC 终端内）
+### 6.4 命令行直接控制仿真（noVNC 终端内）
 
 ```bash
 # 在 noVNC 终端（已 source ROS）内运行
@@ -484,7 +749,72 @@ ros2 run dance_manager choreographer \
 
 ---
 
-## 7. 舞蹈术语参数表（dance vocabulary）
+## 7. 编舞结构概念速查
+
+### 7.1 Form（整体结构形式）
+
+| Form | 说明 | 适用场景 |
+|---|---|---|
+| `ABA` | 引入(A) → 发展/对比(B) → 回归(A') | 最常见，给观众满足感（"回到了原点"） |
+| `rondo` | A→B→A→C→A | 主题反复出现，中间插入对比段落 |
+| `theme-variations` | 建立签名动作，然后系统地变形它 | 强调一个核心动作的进化 |
+| `through-composed` | 持续发展，不重复 | 叙事性旅程，有明确的开头中间结尾 |
+| `free` | 只靠戏剧弧线组织 | 实验性/即兴风格 |
+
+### 7.2 Energy Arc（张力曲线）
+
+| Arc | 形状 | 说明 |
+|---|---|---|
+| `arch` | 低→升→单峰→降 | 最自然，最令人满足 |
+| `wave` | 多峰多谷 | 活泼、震荡感 |
+| `rising` | 持续上升 | 庆祝、胜利感 |
+| `falling` | 从高峰开始降 | 悲伤、结束感 |
+| `flat` | 均匀能量 | 冥想、循环感（少用） |
+
+### 7.3 Section Roles（段落角色）
+
+| Role | 能量建议 | 典型特征 |
+|---|---|---|
+| `introduction` | 中低 | 建立个性，适度能量，设定情绪 |
+| `development` | 中→高 | 积累张力，探索和变换开场材料 |
+| `climax` | 最高 | 唯一的峰值，全力投入，最高能量 |
+| `resolution` | 低 | 回归平静，呼应开场，制造闭合感 |
+| `bridge` | 对比 | 与前后段落形成鲜明对比（ABA 中间） |
+| `coda` | 最低 | 极简的最后陈述，留下最终印象 |
+
+### 7.4 Effort 质量（Laban Movement Analysis）
+
+| weight | time | flow | → texture | energy |
+|---|---|---|---|---|
+| strong | sudden | free | staccato | 0.8–1.0 |
+| strong | sudden | bound | staccato | 0.7–0.9 |
+| strong | sustained | free | honey / ice | 0.6–0.8 |
+| light | sudden | bound | staccato | 0.3–0.6 |
+| light | sustained | free | cloud | 0.1–0.4 |
+| light | sustained | bound | honey | 0.2–0.5 |
+
+### 7.5 Phrase Arc（乐句形状）
+
+| Arc | 说明 | 典型结尾动作 |
+|---|---|---|
+| `build` | 张力逐渐增加 | 能量稍大的动作 |
+| `sustain` | 维持峰值状态 | 重复式动作（crescendo） |
+| `release` | 让步，解消张力 | Bow, Pacing, slow Glide |
+| `punctuate` | 短暂强烈的重音 | SuddenStop, high-energy Spin |
+| `question` | 悬而未决，向外延伸 | Glance, Pacing（不闭合） |
+| `answer` | 解答前一个 question | Bow, 完整 Arc（闭合） |
+
+### 7.6 七条编舞原则（快速参考）
+
+1. **对比** — 相邻段落必须在能量/质感/方向至少一个维度上形成对比
+2. **重复+变奏** — A-A-A-B：重复 3 次后第 4 次打破，制造惊喜
+3. **静止的力量** — 高潮前 gap_before 0.8–1.5s；高潮后 gap_after 1.0s+
+4. **乐句形状** — 每个 phrase 有 arc，不只是动作的列表
+5. **唯一高潮** — 整支舞只有一个峰值，其余都为它服务
+6. **空间旅程** — spatial_path 是编舞选择：圆形=探索，前进=自信，后退=内省
+7. **结尾** — 结尾和开头同等重要；ABA 形式的满足感来自"回到了原点"
+
+## 8. 舞蹈术语参数表（dance vocabulary）
 
 在任意 `params` 字典里可用舞蹈术语代替数字，系统自动翻译。
 
@@ -525,7 +855,7 @@ Motif("Glide", params={
 
 ---
 
-## 8. Modifier 修饰符参考
+## 9. Modifier 修饰符参考
 
 在 `Motif(modifier=...)` 中传入，从 `dance_manager.movement_modifiers` 导入。
 

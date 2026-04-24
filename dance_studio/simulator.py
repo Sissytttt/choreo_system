@@ -186,19 +186,242 @@ def _flip_params(p):
     return f
 
 
-def expand_motifs(motifs_list, tempo_bpm):
-    """Expand a list of motif dicts into a flat sequence of move tuples.
+def _apply_group_mod(items, mod, beat):
+    """Apply a group-level modifier to a flat list of (move, params, gap, energy, texture) tuples."""
+    mtype = mod.get("type", "")
+    gap = float(mod.get("gap", beat))
 
-    Each motif dict is expected to have at least:
-        move_name, params (dict), energy (float), texture (str)
-    and optionally a *modifier* dict describing repetition / variation.
+    if mtype == "mirror":
+        mirrored = [
+            (m, _flip_params(p), gap if i == 0 else g, e, tx)
+            for i, (m, p, g, e, tx) in enumerate(items)
+        ]
+        return list(items) + mirrored
+
+    elif mtype == "direction_flip":
+        flipped = [
+            (m, _flip_params(p), gap if i == 0 else g, e, tx)
+            for i, (m, p, g, e, tx) in enumerate(items)
+        ]
+        return list(items) + flipped
+
+    elif mtype == "repeat":
+        n = int(mod.get("n", 2))
+        result = list(items)
+        for _ in range(n - 1):
+            result.extend(
+                (m, p, gap if i == 0 else g, e, tx)
+                for i, (m, p, g, e, tx) in enumerate(items)
+            )
+        return result
+
+    elif mtype == "repeat_variation":
+        n = int(mod.get("n", 3))
+        e_delta = float(mod.get("energy_delta", 0.1))
+        result = []
+        for rep in range(n):
+            for i, (m, p, g, e, tx) in enumerate(items):
+                new_e = max(0.0, min(1.0, e + rep * e_delta))
+                new_g = gap if (rep > 0 and i == 0) else g
+                result.append((m, p, new_g, new_e, tx))
+        return result
+
+    elif mtype == "invert":
+        return [(m, p, g, max(0.0, min(1.0, 1.0 - e)), tx) for m, p, g, e, tx in items]
+
+    elif mtype == "scale":
+        factor = float(mod.get("factor", 0.5))
+        def _sp(p):
+            s = dict(p)
+            for k in ("radius", "distance", "max_speed", "linear_speed"):
+                if k in s and isinstance(s[k], (int, float)):
+                    s[k] = s[k] * factor
+            return s
+        return [(m, _sp(p), g, e, tx) for m, p, g, e, tx in items]
+
+    elif mtype == "speed_modulate":
+        factor = float(mod.get("factor", 1.5))
+        return [(m, p, g, max(0.0, min(1.0, e * factor)), tx) for m, p, g, e, tx in items]
+
+    elif mtype == "crescendo":
+        n = int(mod.get("n", 2))
+        factor = float(mod.get("factor", 1.3))
+        inter_gap = beat * (n - 1) * (factor - 1.0) * 0.5
+        result = []
+        for rep in range(n):
+            gap_val = max(0.0, inter_gap - rep * beat * (factor - 1.0))
+            result.extend(
+                (m, p, gap_val if (rep > 0 and i == 0) else g, e, tx)
+                for i, (m, p, g, e, tx) in enumerate(items)
+            )
+        return result
+
+    elif mtype == "decay":
+        n = int(mod.get("n", 2))
+        factor = float(mod.get("factor", 0.7))
+        decay_gap = 0.0
+        result = []
+        for rep in range(n):
+            result.extend(
+                (m, p, max(0.0, decay_gap) if (rep > 0 and i == 0) else g, e, tx)
+                for i, (m, p, g, e, tx) in enumerate(items)
+            )
+            decay_gap += beat * (1.0 - factor)
+        return result
+
+    elif mtype == "tension":
+        hold = float(mod.get("hold_duration", beat * 2))
+        if not items:
+            return items
+        m, p, g, e, tx = items[0]
+        return [(m, p, g + hold, e, tx)] + list(items[1:])
+
+    return list(items)
+
+
+def _expand_item(item, beat):
+    """Expand a single motif dict OR a nested group dict into flat tuples."""
+    if "motifs" in item and "move" not in item:
+        # Nested group
+        sub = []
+        for sub_item in item.get("motifs", []):
+            sub.extend(_expand_item(sub_item, beat))
+        group_mod = item.get("modifier")
+        if group_mod:
+            sub = _apply_group_mod(sub, group_mod, beat)
+        return sub
+    # Individual motif
+    return _expand_single_motif(item, beat)
+
+
+def _expand_single_motif(motif, beat):
+    """Expand one motif dict (with optional motif-level modifier) into flat tuples."""
+    move_name = motif.get("move") or motif.get("move_name", "")
+    params = dict(motif.get("params", {}))
+    energy = float(motif.get("energy", 0.5))
+    texture = motif.get("texture", "smooth")
+    modifier = motif.get("modifier")
+    gap = float(motif.get("gap_before", 0.0))
+
+    if modifier is None:
+        return [(move_name, params, gap, energy, texture)]
+
+    mod_type = modifier.get("type", "")
+    n = int(modifier.get("n", 2))
+    factor = float(modifier.get("factor", 0.5))
+    mod_gap = float(modifier.get("gap", beat))
+    expanded = []
+
+    if mod_type == "repeat":
+        for i in range(n):
+            expanded.append((move_name, params, gap if i == 0 else mod_gap, energy, texture))
+
+    elif mod_type == "repeat_variation":
+        energy_delta = float(modifier.get("energy_delta", 0.1))
+        scale_delta = float(modifier.get("scale_delta", 0.0))
+        cur_energy = energy
+        cur_radius = params.get("radius")
+        for i in range(n):
+            p = dict(params)
+            if cur_radius is not None:
+                p["radius"] = max(0.05, cur_radius)
+            expanded.append((move_name, p, gap if i == 0 else mod_gap, max(0.0, min(1.0, cur_energy)), texture))
+            cur_energy += energy_delta
+            if cur_radius is not None:
+                cur_radius *= (1.0 + scale_delta)
+
+    elif mod_type == "mirror":
+        expanded.append((move_name, params, gap, energy, texture))
+        expanded.append((move_name, _flip_params(params), mod_gap, energy, texture))
+
+    elif mod_type == "direction_flip":
+        expanded.append((move_name, params, gap, energy, texture))
+        expanded.append((move_name, _flip_params(params), mod_gap, energy, texture))
+
+    elif mod_type == "invert":
+        inv_energy = max(0.0, min(1.0, 1.0 - energy))
+        p2 = dict(params)
+        if "radius" in p2:
+            p2["radius"] = p2["radius"] * float(modifier.get("factor", 1.0))
+        expanded.append((move_name, params, gap, energy, texture))
+        expanded.append((move_name, p2, mod_gap, inv_energy, texture))
+
+    elif mod_type == "reverse":
+        expanded.append((move_name, params, gap, energy, texture))
+
+    elif mod_type == "scale":
+        sp = dict(params)
+        for key in ("radius", "distance", "linear_speed", "max_speed"):
+            if key in sp:
+                sp[key] = sp[key] * factor
+        expanded.append((move_name, sp, gap, energy, texture))
+
+    elif mod_type == "speed_modulate":
+        expanded.append((move_name, params, gap, max(0.0, min(1.0, energy * factor)), texture))
+
+    elif mod_type == "decay":
+        current_gap = gap
+        for i in range(n):
+            expanded.append((move_name, params, current_gap, energy, texture))
+            current_gap += beat * (1.0 - factor)
+
+    elif mod_type == "crescendo":
+        current_gap = beat * n
+        for i in range(n):
+            expanded.append((move_name, params, gap if i == 0 else current_gap, energy, texture))
+            current_gap = max(0.0, current_gap - beat)
+
+    elif mod_type == "tension":
+        hold = float(modifier.get("hold_duration", beat * 2))
+        expanded.append((move_name, params, gap + hold, energy, texture))
+
+    elif mod_type == "rhythm_shift":
+        gap_scale = float(modifier.get("gap_scale", 0.7))
+        expanded.append((move_name, params, gap * gap_scale, energy, texture))
+
+    elif mod_type == "alternate":
+        other_move = modifier.get("other_move", move_name)
+        other_params = dict(modifier.get("other_params", {}))
+        for i in range(n):
+            if i % 2 == 0:
+                expanded.append((move_name, params, gap if i == 0 else mod_gap, energy, texture))
+            else:
+                expanded.append((other_move, other_params, mod_gap, energy, texture))
+
+    elif mod_type == "asymmetric_pause":
+        short_gap = float(modifier.get("short", beat * 0.5))
+        long_gap = float(modifier.get("long", beat * 1.5))
+        for i in range(n):
+            g = gap if i == 0 else (short_gap if i % 2 == 1 else long_gap)
+            expanded.append((move_name, params, g, energy, texture))
+
+    elif mod_type == "drift":
+        angle_delta = float(modifier.get("angle_delta", 15.0))
+        p2 = dict(params)
+        p2["angle"] = p2.get("angle", 0.0) + angle_delta
+        expanded.append((move_name, p2, gap, energy, texture))
+
+    else:
+        expanded.append((move_name, params, gap, energy, texture))
+
+    return expanded
+
+
+def expand_motifs(motifs_list, tempo_bpm, phrase_modifier=None):
+    """Expand a list of motif/group dicts into a flat sequence of move tuples.
+
+    Handles both individual motif dicts (with "move" key) and nested group
+    dicts (with "motifs" key), enabling compositional expressions like
+    seq_repeat_variation(seq_mirror(A+B+C)).
 
     Parameters
     ----------
     motifs_list : list[dict]
-        Motif descriptors from a phrase.
+        Motif or nested-group descriptors from a phrase.
     tempo_bpm : float
         Tempo in beats per minute (used for gap calculations).
+    phrase_modifier : dict or None
+        Optional phrase-level group modifier applied after all motifs expand.
 
     Returns
     -------
@@ -207,133 +430,10 @@ def expand_motifs(motifs_list, tempo_bpm):
     """
     beat = 60.0 / tempo_bpm
     expanded = []
-
-    for motif in motifs_list:
-        move_name = motif.get("move") or motif.get("move_name", "")
-        params = dict(motif.get("params", {}))
-        energy = float(motif.get("energy", 0.5))
-        texture = motif.get("texture", "smooth")
-        modifier = motif.get("modifier")
-        gap = float(motif.get("gap_before", 0.0))
-
-        if modifier is None:
-            expanded.append((move_name, params, gap, energy, texture))
-            continue
-
-        mod_type = modifier.get("type", "")
-        n = int(modifier.get("n", 2))
-        factor = float(modifier.get("factor", 0.5))
-        mod_gap = float(modifier.get("gap", beat))
-
-        if mod_type == "repeat":
-            for i in range(n):
-                g = gap if i == 0 else mod_gap
-                expanded.append((move_name, params, g, energy, texture))
-
-        elif mod_type == "repeat_variation":
-            energy_delta = float(modifier.get("energy_delta", 0.1))
-            scale_delta = float(modifier.get("scale_delta", 0.0))
-            cur_energy = energy
-            cur_radius = params.get("radius")
-            for i in range(n):
-                g = gap if i == 0 else mod_gap
-                p = dict(params)
-                if cur_radius is not None:
-                    p["radius"] = max(0.05, cur_radius)
-                expanded.append((move_name, p, g, max(0.0, min(1.0, cur_energy)), texture))
-                cur_energy += energy_delta
-                if cur_radius is not None:
-                    cur_radius *= (1.0 + scale_delta)
-
-        elif mod_type == "mirror":
-            expanded.append((move_name, params, gap, energy, texture))
-            expanded.append((move_name, _flip_params(params), mod_gap, energy, texture))
-
-        elif mod_type == "direction_flip":
-            expanded.append((move_name, params, gap, energy, texture))
-            expanded.append((move_name, _flip_params(params), mod_gap, energy, texture))
-
-        elif mod_type == "invert":
-            inv_energy = max(0.0, min(1.0, 1.0 - energy))
-            inv_factor = float(modifier.get("factor", 1.0))
-            p2 = dict(params)
-            if "radius" in p2:
-                p2["radius"] = p2["radius"] * inv_factor
-            expanded.append((move_name, params, gap, energy, texture))
-            expanded.append((move_name, p2, mod_gap, inv_energy, texture))
-
-        elif mod_type == "reverse":
-            # No-op for single motif.
-            expanded.append((move_name, params, gap, energy, texture))
-
-        elif mod_type == "scale":
-            sp = dict(params)
-            for key in ("radius", "distance", "linear_speed", "max_speed"):
-                if key in sp:
-                    sp[key] = sp[key] * factor
-            expanded.append((move_name, sp, gap, energy, texture))
-
-        elif mod_type == "speed_modulate":
-            new_energy = max(0.0, min(1.0, energy * factor))
-            expanded.append((move_name, params, gap, new_energy, texture))
-
-        elif mod_type == "decay":
-            current_gap = gap
-            for i in range(n):
-                g = current_gap if i == 0 else current_gap
-                expanded.append((move_name, params, g, energy, texture))
-                current_gap += beat * (1.0 - factor)
-
-        elif mod_type == "crescendo":
-            current_gap = beat * n
-            for i in range(n):
-                g = gap if i == 0 else current_gap
-                expanded.append((move_name, params, g, energy, texture))
-                current_gap = max(0.0, current_gap - beat)
-
-        elif mod_type == "tension":
-            hold = float(modifier.get("hold_duration", beat * 2))
-            expanded.append((move_name, params, gap + hold, energy, texture))
-
-        elif mod_type == "rhythm_shift":
-            gap_scale = float(modifier.get("gap_scale", 0.7))
-            expanded.append((move_name, params, gap * gap_scale, energy, texture))
-
-        elif mod_type == "alternate":
-            other_move = modifier.get("other_move", move_name)
-            other_params = dict(modifier.get("other_params", {}))
-            for i in range(n):
-                if i % 2 == 0:
-                    g = gap if i == 0 else mod_gap
-                    expanded.append((move_name, params, g, energy, texture))
-                else:
-                    expanded.append((other_move, other_params, mod_gap, energy, texture))
-
-        elif mod_type == "asymmetric_pause":
-            short_gap = float(modifier.get("short", beat * 0.5))
-            long_gap = float(modifier.get("long", beat * 1.5))
-            for i in range(n):
-                if i == 0:
-                    g = gap
-                elif i % 2 == 1:
-                    g = short_gap
-                else:
-                    g = long_gap
-                expanded.append((move_name, params, g, energy, texture))
-
-        elif mod_type == "drift":
-            angle_delta = float(modifier.get("angle_delta", 15.0))
-            p2 = dict(params)
-            p2["angle"] = p2.get("angle", 0.0) + angle_delta
-            expanded.append((move_name, p2, gap, energy, texture))
-
-        elif mod_type == "env_modulation":
-            # Env modulation is transparent to the simulator (physics not modelled).
-            expanded.append((move_name, params, gap, energy, texture))
-
-        else:
-            expanded.append((move_name, params, gap, energy, texture))
-
+    for item in motifs_list:
+        expanded.extend(_expand_item(item, beat))
+    if phrase_modifier:
+        expanded = _apply_group_mod(expanded, phrase_modifier, beat)
     return expanded
 
 
@@ -397,7 +497,17 @@ def simulate(sequence_dict, energy_scale=1.0, tempo_bpm=None, fps=30):
     # Resolve tempo.
     effective_tempo = tempo_bpm if tempo_bpm is not None else float(sequence_dict.get("tempo_bpm", 120))
 
-    phrases = sequence_dict.get("phrases", [])
+    # Flatten sections → phrases (support both new sections format and legacy phrases)
+    raw_phrases = []
+    for section in sequence_dict.get("sections", []):
+        for phrase in section.get("phrases", []):
+            raw_phrases.append(phrase)
+        sec_gap = float(section.get("gap_after", 0.0))
+        if sec_gap > 0 and raw_phrases:
+            raw_phrases[-1] = dict(raw_phrases[-1])
+            raw_phrases[-1]["gap_after"] = raw_phrases[-1].get("gap_after", 0.0) + sec_gap
+    if not raw_phrases:
+        raw_phrases = sequence_dict.get("phrases", [])
 
     # State variables.
     x, y, theta = 0.0, 0.0, 0.0
@@ -408,13 +518,14 @@ def simulate(sequence_dict, energy_scale=1.0, tempo_bpm=None, fps=30):
 
     dt = 1.0 / fps  # time step for stationary-gap frames
 
-    for phrase in phrases:
+    for phrase in raw_phrases:
         phrase_name = phrase.get("name", "")
         motifs = phrase.get("motifs", [])
         gap_after = float(phrase.get("gap_after", 0.0))
 
-        # Expand motifs with their modifiers.
-        expanded = expand_motifs(motifs, effective_tempo)
+        # Expand motifs with their modifiers (including phrase-level group modifier).
+        phrase_mod = phrase.get("modifier")
+        expanded = expand_motifs(motifs, effective_tempo, phrase_modifier=phrase_mod)
 
         for move_name, params, gap_before, energy, texture in expanded:
             effective_energy = _clamp(energy * energy_scale, 0.05, 1.0)
