@@ -115,7 +115,7 @@ async function generateDance() {
             }),
         });
         if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
+        const data = flattenSequence(await res.json());
         state.sequence = data;
         updateSequenceInfo(data);
         printSequence(data);
@@ -183,10 +183,10 @@ async function stopDance() {
 }
 
 async function resetRobot() {
+    stage.clearLiveTrail();  // always clear 2D trail and hide robot dot
     try {
         await fetch('/api/reset', { method: 'POST' });
-        stage.clearLiveTrail();
-    } catch (e) { alert('Reset failed: ' + e.message); }
+    } catch (_) {}  // ROS not available is fine — 2D is already cleared
 }
 
 
@@ -209,7 +209,7 @@ async function loadDance(name) {
     try {
         const res = await fetch(`/api/dances/${encodeURIComponent(name)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        const data = flattenSequence(await res.json());
         state.sequence = data;
         updateSequenceInfo(data);
         printSequence(data);
@@ -229,6 +229,36 @@ async function listDances() {
             dom.loadDropdown.appendChild(opt);
         }
     } catch (_) {}
+}
+
+
+// ── Sequence normalisation ───────────────────────────────────────────────────
+// The AI now returns a `sections` structure (Section→Phrase→Motif).
+// Everything downstream (timeline, simulate, play) expects a flat `phrases` list.
+// flattenSequence() merges sections[*].phrases into seq.phrases so both formats work.
+
+function flattenSequence(seq) {
+    if (!seq) return seq;
+    const sections = seq.sections || [];
+    if (sections.length === 0) return seq;   // already flat, nothing to do
+
+    const merged = [];
+    for (const section of sections) {
+        for (const phrase of (section.phrases || [])) {
+            // Annotate phrase name with section role so the UI shows context
+            const annotated = Object.assign({}, phrase);
+            if (section.name && !annotated.name.includes(section.name)) {
+                annotated.name = `${section.name} · ${annotated.name}`;
+            }
+            merged.push(annotated);
+        }
+        // Carry section gap_after onto the last phrase of that section
+        if (section.gap_after > 0 && merged.length > 0) {
+            const last = merged[merged.length - 1];
+            last.gap_after = (last.gap_after || 0) + section.gap_after;
+        }
+    }
+    return Object.assign({}, seq, { phrases: merged });
 }
 
 

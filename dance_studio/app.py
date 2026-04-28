@@ -121,7 +121,14 @@ class ROSBridge:
                 self._node.get_logger().error('Dance action server not available')
                 return
 
-            for phrase in sequence_dict.get("phrases", []):
+            # Flatten sections → phrases (support both new sections format and legacy phrases)
+            all_phrases = []
+            for section in sequence_dict.get("sections", []):
+                all_phrases.extend(section.get("phrases", []))
+            if not all_phrases:
+                all_phrases = sequence_dict.get("phrases", [])
+
+            for phrase in all_phrases:
                 for motif in phrase.get("motifs", []):
                     if not self._executing:
                         return  # cancelled
@@ -234,7 +241,7 @@ def get_prompt(req: GenerateRequest):
     from dance_manager.choreographer import AIChoreographer
     try:
         ai = AIChoreographer(
-            api_key=os.environ.get("GOOGLE_API_KEY", "dummy"),
+            api_key=os.environ.get("OPENAI_API_KEY", "dummy"),
             platform=stub_platform,
             stage_width=req.stage_width, stage_depth=req.stage_depth,
         )
@@ -256,9 +263,9 @@ def get_prompt(req: GenerateRequest):
 
 @app.post("/api/generate")
 def generate_dance(req: GenerateRequest):
-    api_key = os.environ.get("GOOGLE_API_KEY", "")
+    api_key = os.environ.get("OPENAI_API_KEY", "")
     if not api_key:
-        raise HTTPException(status_code=500, detail="GOOGLE_API_KEY not set")
+        raise HTTPException(status_code=500, detail="OPENAI_API_KEY not set")
     try:
         from dance_manager.choreographer import AIChoreographer
         ai = AIChoreographer(

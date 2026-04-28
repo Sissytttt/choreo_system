@@ -55,6 +55,7 @@ export class Stage {
     clearLiveTrail() {
         this._liveTrail = [];
         this._liveOrigin = null;  // re-zero on next position
+        this._livePos = null;     // hide robot dot until next odom update
     }
 
     /* ------------------------------------------------------------------ */

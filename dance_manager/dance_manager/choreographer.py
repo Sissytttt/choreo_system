@@ -881,16 +881,16 @@ Nested group (for group structural operations):
 {stage_constraints}\
 """
 
-    def __init__(self, api_key: str, platform=None, model: str = "gemini-2.5-flash",
+    def __init__(self, api_key: str, platform=None, model: str = "gpt-4o",
                  stage_width: float = 0.0, stage_depth: float = 0.0):
         try:
-            from google import genai
+            from openai import OpenAI
         except ImportError as exc:
             raise ImportError(
-                "The 'google-genai' package is required for AIChoreographer. "
-                "Install it with: pip install google-genai"
+                "The 'openai' package is required for AIChoreographer. "
+                "Install it with: pip install openai"
             ) from exc
-        self._client = genai.Client(api_key=api_key)
+        self._client = OpenAI(api_key=api_key)
         self._model = model
         self._platform = platform
         self._stage_width = stage_width
@@ -989,7 +989,7 @@ Nested group (for group structural operations):
 
         Args:
             description: Human description of the desired dance.
-            max_retries: How many times to ask Gemini to fix invalid JSON.
+            max_retries: How many times to ask the model to fix invalid JSON.
 
         Returns:
             A populated Sequence dataclass.
@@ -997,7 +997,6 @@ Nested group (for group structural operations):
         Raises:
             ValueError: If the response cannot be parsed after max_retries.
         """
-        from google.genai import types
         from dance_manager.dance_vocabulary import get_vocabulary_description
 
         system = self.SYSTEM_PROMPT_TEMPLATE.format(
@@ -1008,31 +1007,33 @@ Nested group (for group structural operations):
             vocabulary_description=get_vocabulary_description(),
             stage_constraints=self._get_stage_constraints_str(),
         )
-        contents = [description]
+        messages = [
+            {"role": "system", "content": system},
+            {"role": "user",   "content": description},
+        ]
 
         for attempt in range(max_retries + 1):
-            response = self._client.models.generate_content(
+            response = self._client.chat.completions.create(
                 model=self._model,
-                contents=contents,
-                config=types.GenerateContentConfig(
-                    system_instruction=system,
-                    max_output_tokens=8192,
-                    response_mime_type="application/json",
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
+                messages=messages,
+                response_format={"type": "json_object"},
+                max_tokens=8192,
             )
-            raw = response.text.strip()
+            raw = response.choices[0].message.content.strip()
 
             try:
                 data = self._parse_json(raw)
                 return self._dict_to_sequence(data)
             except (json.JSONDecodeError, KeyError, ValueError) as exc:
                 if attempt < max_retries:
-                    contents.append(raw)
-                    contents.append(
-                        f"That response was invalid: {exc}. "
-                        "Please return only the JSON object, no other text."
-                    )
+                    messages.append({"role": "assistant", "content": raw})
+                    messages.append({
+                        "role": "user",
+                        "content": (
+                            f"That response was invalid: {exc}. "
+                            "Please return only the JSON object, no other text."
+                        ),
+                    })
                 else:
                     raise ValueError(
                         f"Could not parse AI response after {max_retries} retries: {exc}\n"
