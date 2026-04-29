@@ -1,0 +1,23 @@
+running develop
+running egg_info
+creating joy_teleop_keymapping.egg-info
+writing joy_teleop_keymapping.egg-info/PKG-INFO
+writing dependency_links to joy_teleop_keymapping.egg-info/dependency_links.txt
+writing entry points to joy_teleop_keymapping.egg-info/entry_points.txt
+writing requirements to joy_teleop_keymapping.egg-info/requires.txt
+writing top-level names to joy_teleop_keymapping.egg-info/top_level.txt
+writing manifest file 'joy_teleop_keymapping.egg-info/SOURCES.txt'
+reading manifest file 'joy_teleop_keymapping.egg-info/SOURCES.txt'
+writing manifest file 'joy_teleop_keymapping.egg-info/SOURCES.txt'
+running build_ext
+Creating /choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages/joy-teleop-keymapping.egg-link (link to .)
+Installing keymapping_node script to /choreo_system/install/joy_teleop_keymapping/lib/joy_teleop_keymapping
+
+Installed /choreo_system/build/joy_teleop_keymapping
+running symlink_data
+creating /choreo_system/install/joy_teleop_keymapping/share/ament_index
+creating /choreo_system/install/joy_teleop_keymapping/share/ament_index/resource_index
+creating /choreo_system/install/joy_teleop_keymapping/share/ament_index/resource_index/packages
+symbolically linking /choreo_system/build/joy_teleop_keymapping/resource/joy_teleop_keymapping -> /choreo_system/install/joy_teleop_keymapping/share/ament_index/resource_index/packages
+symbolically linking /choreo_system/build/joy_teleop_keymapping/package.xml -> /choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping
+symbolically linking /choreo_system/build/joy_teleop_keymapping/launch/mapping_launch.py -> /choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping

@@ -1,0 +1,28 @@
+[0.876s] Invoking command in '/choreo_system/build/dance_manager': PYTHONPATH=/choreo_system/build/dance_manager/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/dance_manager/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/dance_manager/build --no-deps symlink_data
+[1.053s] running develop
+[1.149s] running egg_info
+[1.149s] creating dance_manager.egg-info
+[1.152s] writing dance_manager.egg-info/PKG-INFO
+[1.153s] writing dependency_links to dance_manager.egg-info/dependency_links.txt
+[1.155s] writing entry points to dance_manager.egg-info/entry_points.txt
+[1.156s] writing requirements to dance_manager.egg-info/requires.txt
+[1.157s] writing top-level names to dance_manager.egg-info/top_level.txt
+[1.158s] writing manifest file 'dance_manager.egg-info/SOURCES.txt'
+[1.168s] reading manifest file 'dance_manager.egg-info/SOURCES.txt'
+[1.174s] writing manifest file 'dance_manager.egg-info/SOURCES.txt'
+[1.175s] running build_ext
+[1.176s] Creating /choreo_system/install/dance_manager/lib/python3.10/site-packages/dance-manager.egg-link (link to .)
+[1.180s] Installing choreographer script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.185s] Installing dance_action_client script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.187s] Installing dance_action_server script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.189s] Installing dance_visualizer script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.191s] 
+[1.192s] Installed /choreo_system/build/dance_manager
+[1.192s] running symlink_data
+[1.192s] creating /choreo_system/install/dance_manager/share/ament_index
+[1.193s] creating /choreo_system/install/dance_manager/share/ament_index/resource_index
+[1.193s] creating /choreo_system/install/dance_manager/share/ament_index/resource_index/packages
+[1.194s] symbolically linking /choreo_system/build/dance_manager/resource/dance_manager -> /choreo_system/install/dance_manager/share/ament_index/resource_index/packages
+[1.194s] symbolically linking /choreo_system/build/dance_manager/package.xml -> /choreo_system/install/dance_manager/share/dance_manager
+[1.194s] symbolically linking /choreo_system/build/dance_manager/launch/dance_server_launch.py -> /choreo_system/install/dance_manager/share/dance_manager
+[1.247s] Invoked command in '/choreo_system/build/dance_manager' returned '0': PYTHONPATH=/choreo_system/build/dance_manager/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/dance_manager/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/dance_manager/build --no-deps symlink_data

@@ -1,0 +1,29 @@
+[0.888s] Invoking command in '/choreo_system/build/mobile_robot_control': PYTHONPATH=/choreo_system/build/mobile_robot_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/mobile_robot_control/build --no-deps symlink_data
+[1.053s] running develop
+[1.151s] running egg_info
+[1.152s] creating mobile_robot_control.egg-info
+[1.152s] writing mobile_robot_control.egg-info/PKG-INFO
+[1.153s] writing dependency_links to mobile_robot_control.egg-info/dependency_links.txt
+[1.155s] writing entry points to mobile_robot_control.egg-info/entry_points.txt
+[1.156s] writing requirements to mobile_robot_control.egg-info/requires.txt
+[1.158s] writing top-level names to mobile_robot_control.egg-info/top_level.txt
+[1.160s] writing manifest file 'mobile_robot_control.egg-info/SOURCES.txt'
+[1.168s] reading manifest file 'mobile_robot_control.egg-info/SOURCES.txt'
+[1.175s] writing manifest file 'mobile_robot_control.egg-info/SOURCES.txt'
+[1.176s] running build_ext
+[1.177s] Creating /choreo_system/install/mobile_robot_control/lib/python3.10/site-packages/mobile-robot-control.egg-link (link to .)
+[1.179s] Installing mobile_robot_control_node script to /choreo_system/install/mobile_robot_control/lib/mobile_robot_control
+[1.181s] 
+[1.182s] Installed /choreo_system/build/mobile_robot_control
+[1.184s] running symlink_data
+[1.185s] creating /choreo_system/install/mobile_robot_control/share/ament_index
+[1.185s] creating /choreo_system/install/mobile_robot_control/share/ament_index/resource_index
+[1.185s] creating /choreo_system/install/mobile_robot_control/share/ament_index/resource_index/packages
+[1.185s] symbolically linking /choreo_system/build/mobile_robot_control/resource/mobile_robot_control -> /choreo_system/install/mobile_robot_control/share/ament_index/resource_index/packages
+[1.189s] symbolically linking /choreo_system/build/mobile_robot_control/package.xml -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+[1.189s] symbolically linking /choreo_system/build/mobile_robot_control/launch/hoverboard_launch.py -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+[1.190s] symbolically linking /choreo_system/build/mobile_robot_control/launch/mobile_robot_launch.py -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+[1.190s] symbolically linking /choreo_system/build/mobile_robot_control/launch/joystick_launch.py -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+[1.191s] creating /choreo_system/install/mobile_robot_control/share/mobile_robot_control/config
+[1.194s] symbolically linking /choreo_system/build/mobile_robot_control/config/twist_mux.yaml -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control/config
+[1.254s] Invoked command in '/choreo_system/build/mobile_robot_control' returned '0': PYTHONPATH=/choreo_system/build/mobile_robot_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/mobile_robot_control/build --no-deps symlink_data

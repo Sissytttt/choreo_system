@@ -1,0 +1,25 @@
+[0.876s] Invoking command in '/choreo_system/build/joy_teleop_keymapping': PYTHONPATH=/choreo_system/build/joy_teleop_keymapping/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/joy_teleop_keymapping/build --no-deps symlink_data
+[1.045s] running develop
+[1.140s] running egg_info
+[1.141s] creating joy_teleop_keymapping.egg-info
+[1.142s] writing joy_teleop_keymapping.egg-info/PKG-INFO
+[1.145s] writing dependency_links to joy_teleop_keymapping.egg-info/dependency_links.txt
+[1.147s] writing entry points to joy_teleop_keymapping.egg-info/entry_points.txt
+[1.148s] writing requirements to joy_teleop_keymapping.egg-info/requires.txt
+[1.150s] writing top-level names to joy_teleop_keymapping.egg-info/top_level.txt
+[1.151s] writing manifest file 'joy_teleop_keymapping.egg-info/SOURCES.txt'
+[1.159s] reading manifest file 'joy_teleop_keymapping.egg-info/SOURCES.txt'
+[1.161s] writing manifest file 'joy_teleop_keymapping.egg-info/SOURCES.txt'
+[1.163s] running build_ext
+[1.165s] Creating /choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages/joy-teleop-keymapping.egg-link (link to .)
+[1.170s] Installing keymapping_node script to /choreo_system/install/joy_teleop_keymapping/lib/joy_teleop_keymapping
+[1.170s] 
+[1.171s] Installed /choreo_system/build/joy_teleop_keymapping
+[1.173s] running symlink_data
+[1.174s] creating /choreo_system/install/joy_teleop_keymapping/share/ament_index
+[1.175s] creating /choreo_system/install/joy_teleop_keymapping/share/ament_index/resource_index
+[1.177s] creating /choreo_system/install/joy_teleop_keymapping/share/ament_index/resource_index/packages
+[1.178s] symbolically linking /choreo_system/build/joy_teleop_keymapping/resource/joy_teleop_keymapping -> /choreo_system/install/joy_teleop_keymapping/share/ament_index/resource_index/packages
+[1.179s] symbolically linking /choreo_system/build/joy_teleop_keymapping/package.xml -> /choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping
+[1.181s] symbolically linking /choreo_system/build/joy_teleop_keymapping/launch/mapping_launch.py -> /choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping
+[1.202s] Invoked command in '/choreo_system/build/joy_teleop_keymapping' returned '0': PYTHONPATH=/choreo_system/build/joy_teleop_keymapping/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/joy_teleop_keymapping/build --no-deps symlink_data

@@ -1,0 +1,32 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from dance_interfaces/action/Dance.action
+// generated code does not contain a copyright notice
+
+
+module dance_interfaces {
+  module action {
+    @verbatim (language="comment", text=
+      "Request")
+    struct Dance_Goal {
+      string dance_move;
+
+      @default (value=0.5)
+      float energy;
+
+      @default (value="neutral")
+      string texture;
+
+      string params;
+    };
+    @verbatim (language="comment", text=
+      "Result")
+    struct Dance_Result {
+      int32 result_code;
+    };
+    @verbatim (language="comment", text=
+      "Feedback")
+    struct Dance_Feedback {
+      int32 progress;
+    };
+  };
+};

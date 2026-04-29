@@ -1,0 +1,485 @@
+[0.074s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[0.074s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=10, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0xffff86d10d30>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffff86d10430>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffff86d10430>>)
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.188s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/choreo_system'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.190s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.190s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.190s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.190s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.197s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.198s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.198s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.198s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.198s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.198s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.198s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extensions ['ignore', 'ignore_ament_install']
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extension 'ignore'
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extension 'ignore_ament_install'
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extensions ['colcon_pkg']
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extension 'colcon_pkg'
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extensions ['colcon_meta']
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extension 'colcon_meta'
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extensions ['ros']
+[0.199s] Level 1:colcon.colcon_core.package_identification:_identify(chair_dance_sim) by extension 'ros'
+[0.201s] DEBUG:colcon.colcon_core.package_identification:Package 'chair_dance_sim' with type 'ros.ament_cmake' and name 'chair_dance_sim'
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extensions ['ignore', 'ignore_ament_install']
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extension 'ignore'
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extension 'ignore_ament_install'
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extensions ['colcon_pkg']
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extension 'colcon_pkg'
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extensions ['colcon_meta']
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extension 'colcon_meta'
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extensions ['ros']
+[0.202s] Level 1:colcon.colcon_core.package_identification:_identify(dance_interfaces) by extension 'ros'
+[0.203s] DEBUG:colcon.colcon_core.package_identification:Package 'dance_interfaces' with type 'ros.ament_cmake' and name 'dance_interfaces'
+[0.203s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extensions ['ignore', 'ignore_ament_install']
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extension 'ignore'
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extension 'ignore_ament_install'
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extensions ['colcon_pkg']
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extension 'colcon_pkg'
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extensions ['colcon_meta']
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extension 'colcon_meta'
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extensions ['ros']
+[0.204s] Level 1:colcon.colcon_core.package_identification:_identify(dance_manager) by extension 'ros'
+[0.206s] DEBUG:colcon.colcon_core.package_identification:Package 'dance_manager' with type 'ros.ament_python' and name 'dance_manager'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extensions ['ignore', 'ignore_ament_install']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'ignore'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'ignore_ament_install'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extensions ['colcon_pkg']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'colcon_pkg'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extensions ['colcon_meta']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'colcon_meta'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extensions ['ros']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'ros'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extensions ['cmake', 'python']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'cmake'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'python'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extensions ['python_setup_py']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces) by extension 'python_setup_py'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extensions ['ignore', 'ignore_ament_install']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'ignore'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'ignore_ament_install'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extensions ['colcon_pkg']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'colcon_pkg'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extensions ['colcon_meta']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'colcon_meta'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extensions ['ros']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'ros'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extensions ['cmake', 'python']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'cmake'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'python'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extensions ['python_setup_py']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(dance_move_interfaces/action) by extension 'python_setup_py'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extensions ['ignore', 'ignore_ament_install']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'ignore'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'ignore_ament_install'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extensions ['colcon_pkg']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'colcon_pkg'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extensions ['colcon_meta']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'colcon_meta'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extensions ['ros']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'ros'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extensions ['cmake', 'python']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'cmake'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'python'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extensions ['python_setup_py']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio) by extension 'python_setup_py'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extensions ['ignore', 'ignore_ament_install']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'ignore'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'ignore_ament_install'
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extensions ['colcon_pkg']
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'colcon_pkg'
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extensions ['colcon_meta']
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'colcon_meta'
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extensions ['ros']
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'ros'
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extensions ['cmake', 'python']
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'cmake'
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'python'
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extensions ['python_setup_py']
+[0.211s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/__pycache__) by extension 'python_setup_py'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extensions ['ignore', 'ignore_ament_install']
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'ignore'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'ignore_ament_install'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extensions ['colcon_pkg']
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'colcon_pkg'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extensions ['colcon_meta']
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'colcon_meta'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extensions ['ros']
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'ros'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extensions ['cmake', 'python']
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'cmake'
+[0.212s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'python'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extensions ['python_setup_py']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/dances) by extension 'python_setup_py'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extensions ['ignore', 'ignore_ament_install']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'ignore'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'ignore_ament_install'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extensions ['colcon_pkg']
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'colcon_pkg'
+[0.213s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extensions ['colcon_meta']
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'colcon_meta'
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extensions ['ros']
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'ros'
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extensions ['cmake', 'python']
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'cmake'
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'python'
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extensions ['python_setup_py']
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(dance_studio/static) by extension 'python_setup_py'
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['ignore', 'ignore_ament_install']
+[0.214s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'ignore'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'ignore_ament_install'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['colcon_pkg']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'colcon_pkg'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['colcon_meta']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'colcon_meta'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['ros']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'ros'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['cmake', 'python']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'cmake'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'python'
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['python_setup_py']
+[0.215s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'python_setup_py'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extensions ['ignore', 'ignore_ament_install']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'ignore'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'ignore_ament_install'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extensions ['colcon_pkg']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'colcon_pkg'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extensions ['colcon_meta']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'colcon_meta'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extensions ['ros']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'ros'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extensions ['cmake', 'python']
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'cmake'
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'python'
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extensions ['python_setup_py']
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(docs/imgs) by extension 'python_setup_py'
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extensions ['ignore', 'ignore_ament_install']
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'ignore'
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'ignore_ament_install'
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extensions ['colcon_pkg']
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'colcon_pkg'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extensions ['colcon_meta']
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'colcon_meta'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extensions ['ros']
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'ros'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extensions ['cmake', 'python']
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'cmake'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'python'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extensions ['python_setup_py']
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(images) by extension 'python_setup_py'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extensions ['ignore', 'ignore_ament_install']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extension 'ignore'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extension 'ignore_ament_install'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extensions ['colcon_pkg']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extension 'colcon_pkg'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extensions ['colcon_meta']
+[0.220s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extension 'colcon_meta'
+[0.220s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extensions ['ros']
+[0.220s] Level 1:colcon.colcon_core.package_identification:_identify(joy_teleop_keymapping) by extension 'ros'
+[0.220s] DEBUG:colcon.colcon_core.package_identification:Package 'joy_teleop_keymapping' with type 'ros.ament_python' and name 'joy_teleop_keymapping'
+[0.221s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.221s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.221s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extensions ['ignore', 'ignore_ament_install']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extension 'ignore'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extension 'ignore_ament_install'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extensions ['colcon_pkg']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extension 'colcon_pkg'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extensions ['colcon_meta']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extension 'colcon_meta'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extensions ['ros']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(mobile_robot_control) by extension 'ros'
+[0.223s] DEBUG:colcon.colcon_core.package_identification:Package 'mobile_robot_control' with type 'ros.ament_python' and name 'mobile_robot_control'
+[0.223s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.223s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.223s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.223s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.223s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.245s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.249s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 5 installed packages in /choreo_system/install
+[0.250s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 288 installed packages in /opt/ros/humble
+[0.251s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.280s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'cmake_args' from command line to 'None'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'cmake_target' from command line to 'None'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'cmake_clean_cache' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'cmake_clean_first' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'cmake_force_configure' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'ament_cmake_args' from command line to 'None'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'catkin_cmake_args' from command line to 'None'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_interfaces' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.281s] DEBUG:colcon.colcon_core.verb:Building package 'dance_interfaces' with the following arguments: {'ament_cmake_args': None, 'build_base': '/choreo_system/build/dance_interfaces', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/choreo_system/install/dance_interfaces', 'merge_install': False, 'path': '/choreo_system/dance_interfaces', 'symlink_install': True, 'test_result_base': None}
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'cmake_args' from command line to 'None'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'cmake_target' from command line to 'None'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'cmake_clean_cache' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'cmake_clean_first' from command line to 'False'
+[0.281s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'cmake_force_configure' from command line to 'False'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'ament_cmake_args' from command line to 'None'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'catkin_cmake_args' from command line to 'None'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'dance_manager' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.282s] DEBUG:colcon.colcon_core.verb:Building package 'dance_manager' with the following arguments: {'ament_cmake_args': None, 'build_base': '/choreo_system/build/dance_manager', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/choreo_system/install/dance_manager', 'merge_install': False, 'path': '/choreo_system/dance_manager', 'symlink_install': True, 'test_result_base': None}
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'cmake_args' from command line to 'None'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'cmake_target' from command line to 'None'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'cmake_clean_cache' from command line to 'False'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'cmake_clean_first' from command line to 'False'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'cmake_force_configure' from command line to 'False'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'ament_cmake_args' from command line to 'None'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'catkin_cmake_args' from command line to 'None'
+[0.282s] Level 5:colcon.colcon_core.verb:set package 'joy_teleop_keymapping' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.282s] DEBUG:colcon.colcon_core.verb:Building package 'joy_teleop_keymapping' with the following arguments: {'ament_cmake_args': None, 'build_base': '/choreo_system/build/joy_teleop_keymapping', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/choreo_system/install/joy_teleop_keymapping', 'merge_install': False, 'path': '/choreo_system/joy_teleop_keymapping', 'symlink_install': True, 'test_result_base': None}
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'cmake_args' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'cmake_target' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'cmake_clean_cache' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'cmake_clean_first' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'cmake_force_configure' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'ament_cmake_args' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'catkin_cmake_args' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'mobile_robot_control' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.283s] DEBUG:colcon.colcon_core.verb:Building package 'mobile_robot_control' with the following arguments: {'ament_cmake_args': None, 'build_base': '/choreo_system/build/mobile_robot_control', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/choreo_system/install/mobile_robot_control', 'merge_install': False, 'path': '/choreo_system/mobile_robot_control', 'symlink_install': True, 'test_result_base': None}
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'cmake_args' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'cmake_target' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'cmake_clean_cache' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'cmake_clean_first' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'cmake_force_configure' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'ament_cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'catkin_cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'chair_dance_sim' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.284s] DEBUG:colcon.colcon_core.verb:Building package 'chair_dance_sim' with the following arguments: {'ament_cmake_args': None, 'build_base': '/choreo_system/build/chair_dance_sim', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/choreo_system/install/chair_dance_sim', 'merge_install': False, 'path': '/choreo_system/chair_dance_sim', 'symlink_install': True, 'test_result_base': None}
+[0.284s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.284s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.285s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/choreo_system/dance_interfaces' with build type 'ament_cmake'
+[0.285s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/choreo_system/dance_interfaces'
+[0.286s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.286s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.287s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.291s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/choreo_system/dance_manager' with build type 'ament_python'
+[0.292s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_manager', 'ament_prefix_path')
+[0.292s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_manager/share/dance_manager/hook/ament_prefix_path.ps1'
+[0.293s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/dance_manager/share/dance_manager/hook/ament_prefix_path.dsv'
+[0.293s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_manager/share/dance_manager/hook/ament_prefix_path.sh'
+[0.294s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.294s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.298s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/choreo_system/joy_teleop_keymapping' with build type 'ament_python'
+[0.298s] Level 1:colcon.colcon_core.shell:create_environment_hook('joy_teleop_keymapping', 'ament_prefix_path')
+[0.299s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/ament_prefix_path.ps1'
+[0.300s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/ament_prefix_path.dsv'
+[0.301s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/ament_prefix_path.sh'
+[0.302s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.302s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.306s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/choreo_system/mobile_robot_control' with build type 'ament_python'
+[0.306s] Level 1:colcon.colcon_core.shell:create_environment_hook('mobile_robot_control', 'ament_prefix_path')
+[0.306s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/hook/ament_prefix_path.ps1'
+[0.307s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/hook/ament_prefix_path.dsv'
+[0.308s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/hook/ament_prefix_path.sh'
+[0.308s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.308s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.320s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/dance_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble /usr/bin/cmake --build /choreo_system/build/dance_interfaces -- -j10 -l10
+[0.536s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/choreo_system/dance_manager'
+[0.537s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.537s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.767s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/choreo_system/joy_teleop_keymapping'
+[0.767s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.768s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.965s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/choreo_system/mobile_robot_control'
+[0.965s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.965s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.977s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/dance_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble /usr/bin/cmake --build /choreo_system/build/dance_interfaces -- -j10 -l10
+[0.990s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/dance_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble /usr/bin/cmake --install /choreo_system/build/dance_interfaces
+[1.138s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(dance_interfaces)
+[1.139s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/dance_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble /usr/bin/cmake --install /choreo_system/build/dance_interfaces
+[1.140s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces' for CMake module files
+[1.149s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces' for CMake config files
+[1.163s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_interfaces', 'cmake_prefix_path')
+[1.164s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/cmake_prefix_path.ps1'
+[1.165s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/cmake_prefix_path.dsv'
+[1.168s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/cmake_prefix_path.sh'
+[1.170s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/lib'
+[1.170s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_interfaces', 'ld_library_path_lib')
+[1.170s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/ld_library_path_lib.ps1'
+[1.171s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/ld_library_path_lib.dsv'
+[1.175s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/ld_library_path_lib.sh'
+[1.178s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/bin'
+[1.178s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/lib/pkgconfig/dance_interfaces.pc'
+[1.180s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/lib/python3.10/site-packages'
+[1.181s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/bin'
+[1.181s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.ps1'
+[1.185s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.dsv'
+[1.187s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.sh'
+[1.190s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.bash'
+[1.191s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.zsh'
+[1.192s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/dance_interfaces/share/colcon-core/packages/dance_interfaces)
+[1.194s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(dance_interfaces)
+[1.194s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces' for CMake module files
+[1.197s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces' for CMake config files
+[1.204s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_interfaces', 'cmake_prefix_path')
+[1.204s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/cmake_prefix_path.ps1'
+[1.205s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/cmake_prefix_path.dsv'
+[1.205s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/cmake_prefix_path.sh'
+[1.206s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/lib'
+[1.207s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_interfaces', 'ld_library_path_lib')
+[1.207s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/ld_library_path_lib.ps1'
+[1.208s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/ld_library_path_lib.dsv'
+[1.208s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_interfaces/share/dance_interfaces/hook/ld_library_path_lib.sh'
+[1.209s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/bin'
+[1.209s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/lib/pkgconfig/dance_interfaces.pc'
+[1.209s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/lib/python3.10/site-packages'
+[1.210s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_interfaces/bin'
+[1.210s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.ps1'
+[1.211s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.dsv'
+[1.211s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.sh'
+[1.212s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.bash'
+[1.213s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_interfaces/share/dance_interfaces/package.zsh'
+[1.214s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/dance_interfaces/share/colcon-core/packages/dance_interfaces)
+[1.239s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/joy_teleop_keymapping': PYTHONPATH=/choreo_system/build/joy_teleop_keymapping/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/joy_teleop_keymapping/build --no-deps symlink_data
+[1.256s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/dance_manager': PYTHONPATH=/choreo_system/build/dance_manager/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/dance_manager/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/dance_manager/build --no-deps symlink_data
+[1.272s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/mobile_robot_control': PYTHONPATH=/choreo_system/build/mobile_robot_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/mobile_robot_control/build --no-deps symlink_data
+[1.648s] Level 1:colcon.colcon_core.shell:create_environment_hook('joy_teleop_keymapping', 'pythonpath_develop')
+[1.648s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/build/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/pythonpath_develop.ps1'
+[1.650s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/joy_teleop_keymapping' returned '0': PYTHONPATH=/choreo_system/build/joy_teleop_keymapping/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/joy_teleop_keymapping/build --no-deps symlink_data
+[1.651s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/build/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/pythonpath_develop.dsv'
+[1.652s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/build/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/pythonpath_develop.sh'
+[1.656s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping' for CMake module files
+[1.661s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping' for CMake config files
+[1.666s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping/lib'
+[1.666s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping/bin'
+[1.666s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping/lib/pkgconfig/joy_teleop_keymapping.pc'
+[1.666s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages'
+[1.667s] Level 1:colcon.colcon_core.shell:create_environment_hook('joy_teleop_keymapping', 'pythonpath')
+[1.667s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/pythonpath.ps1'
+[1.667s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/pythonpath.dsv'
+[1.668s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/hook/pythonpath.sh'
+[1.669s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/joy_teleop_keymapping/bin'
+[1.669s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(joy_teleop_keymapping)
+[1.669s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/package.ps1'
+[1.670s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/package.dsv'
+[1.671s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/package.sh'
+[1.672s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/package.bash'
+[1.673s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/joy_teleop_keymapping/share/joy_teleop_keymapping/package.zsh'
+[1.673s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/joy_teleop_keymapping/share/colcon-core/packages/joy_teleop_keymapping)
+[1.674s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_manager', 'pythonpath_develop')
+[1.674s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/build/dance_manager/share/dance_manager/hook/pythonpath_develop.ps1'
+[1.675s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/build/dance_manager/share/dance_manager/hook/pythonpath_develop.dsv'
+[1.676s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/build/dance_manager/share/dance_manager/hook/pythonpath_develop.sh'
+[1.677s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/dance_manager' returned '0': PYTHONPATH=/choreo_system/build/dance_manager/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/dance_manager/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/dance_manager/build --no-deps symlink_data
+[1.678s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager' for CMake module files
+[1.679s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager' for CMake config files
+[1.683s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager/lib'
+[1.683s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager/bin'
+[1.683s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager/lib/pkgconfig/dance_manager.pc'
+[1.683s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager/lib/python3.10/site-packages'
+[1.683s] Level 1:colcon.colcon_core.shell:create_environment_hook('dance_manager', 'pythonpath')
+[1.684s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_manager/share/dance_manager/hook/pythonpath.ps1'
+[1.684s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/dance_manager/share/dance_manager/hook/pythonpath.dsv'
+[1.685s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/dance_manager/share/dance_manager/hook/pythonpath.sh'
+[1.686s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/dance_manager/bin'
+[1.686s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(dance_manager)
+[1.687s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_manager/share/dance_manager/package.ps1'
+[1.687s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/dance_manager/share/dance_manager/package.dsv'
+[1.688s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_manager/share/dance_manager/package.sh'
+[1.688s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_manager/share/dance_manager/package.bash'
+[1.689s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/dance_manager/share/dance_manager/package.zsh'
+[1.689s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/dance_manager/share/colcon-core/packages/dance_manager)
+[1.690s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/choreo_system/chair_dance_sim' with build type 'ament_cmake'
+[1.690s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/choreo_system/chair_dance_sim'
+[1.691s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.691s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.697s] Level 1:colcon.colcon_core.shell:create_environment_hook('mobile_robot_control', 'pythonpath_develop')
+[1.698s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/build/mobile_robot_control/share/mobile_robot_control/hook/pythonpath_develop.ps1'
+[1.698s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/mobile_robot_control' returned '0': PYTHONPATH=/choreo_system/build/mobile_robot_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/mobile_robot_control/build --no-deps symlink_data
+[1.699s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/build/mobile_robot_control/share/mobile_robot_control/hook/pythonpath_develop.dsv'
+[1.699s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/build/mobile_robot_control/share/mobile_robot_control/hook/pythonpath_develop.sh'
+[1.700s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control' for CMake module files
+[1.703s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control' for CMake config files
+[1.708s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control/lib'
+[1.708s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control/bin'
+[1.708s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control/lib/pkgconfig/mobile_robot_control.pc'
+[1.708s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages'
+[1.709s] Level 1:colcon.colcon_core.shell:create_environment_hook('mobile_robot_control', 'pythonpath')
+[1.709s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/hook/pythonpath.ps1'
+[1.709s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/hook/pythonpath.dsv'
+[1.710s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/hook/pythonpath.sh'
+[1.710s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/mobile_robot_control/bin'
+[1.710s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(mobile_robot_control)
+[1.711s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/package.ps1'
+[1.711s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/package.dsv'
+[1.712s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/package.sh'
+[1.712s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/package.bash'
+[1.713s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/mobile_robot_control/share/mobile_robot_control/package.zsh'
+[1.713s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/mobile_robot_control/share/colcon-core/packages/mobile_robot_control)
+[1.719s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/chair_dance_sim': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/chair_dance_sim:/choreo_system/install/dance_interfaces:/opt/ros/humble CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/choreo_system/install/chair_dance_sim:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/build/mobile_robot_control:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:/choreo_system/build/joy_teleop_keymapping:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages /usr/bin/cmake --build /choreo_system/build/chair_dance_sim -- -j10 -l10
+[1.760s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/chair_dance_sim' returned '0': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/chair_dance_sim:/choreo_system/install/dance_interfaces:/opt/ros/humble CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/choreo_system/install/chair_dance_sim:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/build/mobile_robot_control:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:/choreo_system/build/joy_teleop_keymapping:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages /usr/bin/cmake --build /choreo_system/build/chair_dance_sim -- -j10 -l10
+[1.763s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/choreo_system/build/chair_dance_sim': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/chair_dance_sim:/choreo_system/install/dance_interfaces:/opt/ros/humble CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/choreo_system/install/chair_dance_sim:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/build/mobile_robot_control:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:/choreo_system/build/joy_teleop_keymapping:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages /usr/bin/cmake --install /choreo_system/build/chair_dance_sim
+[1.794s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(chair_dance_sim)
+[1.795s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim' for CMake module files
+[1.795s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/choreo_system/build/chair_dance_sim' returned '0': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/chair_dance_sim:/choreo_system/install/dance_interfaces:/opt/ros/humble CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/choreo_system/install/chair_dance_sim:/choreo_system/install/mobile_robot_control:/choreo_system/install/joy_teleop_keymapping:/choreo_system/install/dance_manager:/opt/ros/humble PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/build/mobile_robot_control:/choreo_system/install/mobile_robot_control/lib/python3.10/site-packages:/choreo_system/build/joy_teleop_keymapping:/choreo_system/install/joy_teleop_keymapping/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages /usr/bin/cmake --install /choreo_system/build/chair_dance_sim
+[1.797s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim' for CMake config files
+[1.798s] Level 1:colcon.colcon_core.shell:create_environment_hook('chair_dance_sim', 'cmake_prefix_path')
+[1.798s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/hook/cmake_prefix_path.ps1'
+[1.799s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/hook/cmake_prefix_path.dsv'
+[1.799s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/hook/cmake_prefix_path.sh'
+[1.800s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/bin'
+[1.800s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/lib/pkgconfig/chair_dance_sim.pc'
+[1.800s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/lib/python3.10/site-packages'
+[1.801s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/bin'
+[1.801s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.ps1'
+[1.801s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.dsv'
+[1.802s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.sh'
+[1.803s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.bash'
+[1.803s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.zsh'
+[1.804s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/chair_dance_sim/share/colcon-core/packages/chair_dance_sim)
+[1.805s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(chair_dance_sim)
+[1.805s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim' for CMake module files
+[1.807s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim' for CMake config files
+[1.808s] Level 1:colcon.colcon_core.shell:create_environment_hook('chair_dance_sim', 'cmake_prefix_path')
+[1.808s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/hook/cmake_prefix_path.ps1'
+[1.809s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/hook/cmake_prefix_path.dsv'
+[1.809s] INFO:colcon.colcon_core.shell:Creating environment hook '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/hook/cmake_prefix_path.sh'
+[1.810s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/bin'
+[1.810s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/lib/pkgconfig/chair_dance_sim.pc'
+[1.811s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/lib/python3.10/site-packages'
+[1.811s] Level 1:colcon.colcon_core.environment:checking '/choreo_system/install/chair_dance_sim/bin'
+[1.811s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.ps1'
+[1.812s] INFO:colcon.colcon_core.shell:Creating package descriptor '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.dsv'
+[1.813s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.sh'
+[1.814s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.bash'
+[1.814s] INFO:colcon.colcon_core.shell:Creating package script '/choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.zsh'
+[1.815s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/choreo_system/install/chair_dance_sim/share/colcon-core/packages/chair_dance_sim)
+[1.815s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[1.815s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[1.816s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[1.816s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[1.821s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.821s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.821s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[1.924s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[1.924s] INFO:colcon.colcon_core.shell:Creating prefix script '/choreo_system/install/local_setup.ps1'
+[1.926s] INFO:colcon.colcon_core.shell:Creating prefix util module '/choreo_system/install/_local_setup_util_ps1.py'
+[1.927s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/choreo_system/install/setup.ps1'
+[1.930s] INFO:colcon.colcon_core.shell:Creating prefix script '/choreo_system/install/local_setup.sh'
+[1.931s] INFO:colcon.colcon_core.shell:Creating prefix util module '/choreo_system/install/_local_setup_util_sh.py'
+[1.931s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/choreo_system/install/setup.sh'
+[1.933s] INFO:colcon.colcon_core.shell:Creating prefix script '/choreo_system/install/local_setup.bash'
+[1.934s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/choreo_system/install/setup.bash'
+[1.936s] INFO:colcon.colcon_core.shell:Creating prefix script '/choreo_system/install/local_setup.zsh'
+[1.936s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/choreo_system/install/setup.zsh'

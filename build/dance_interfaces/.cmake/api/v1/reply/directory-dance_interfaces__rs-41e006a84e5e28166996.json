@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "dance_interfaces__rs",
+		"source" : "/choreo_system/build/dance_interfaces/dance_interfaces__rs"
+	}
+}

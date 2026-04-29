@@ -1,0 +1,6 @@
+Invoking command in '/choreo_system/build/dance_interfaces': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /choreo_system/dance_interfaces -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/choreo_system/install/dance_interfaces
+Invoked command in '/choreo_system/build/dance_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /choreo_system/dance_interfaces -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/choreo_system/install/dance_interfaces
+Invoking command in '/choreo_system/build/dance_interfaces': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /choreo_system/build/dance_interfaces -- -j10 -l10
+Invoked command in '/choreo_system/build/dance_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /choreo_system/build/dance_interfaces -- -j10 -l10
+Invoking command in '/choreo_system/build/dance_interfaces': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /choreo_system/build/dance_interfaces
+Invoked command in '/choreo_system/build/dance_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /choreo_system/build/dance_interfaces

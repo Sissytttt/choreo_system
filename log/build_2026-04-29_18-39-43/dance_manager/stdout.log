@@ -1,0 +1,18 @@
+running develop
+running egg_info
+writing dance_manager.egg-info/PKG-INFO
+writing dependency_links to dance_manager.egg-info/dependency_links.txt
+writing entry points to dance_manager.egg-info/entry_points.txt
+writing requirements to dance_manager.egg-info/requires.txt
+writing top-level names to dance_manager.egg-info/top_level.txt
+reading manifest file 'dance_manager.egg-info/SOURCES.txt'
+writing manifest file 'dance_manager.egg-info/SOURCES.txt'
+running build_ext
+Creating /choreo_system/install/dance_manager/lib/python3.10/site-packages/dance-manager.egg-link (link to .)
+Installing choreographer script to /choreo_system/install/dance_manager/lib/dance_manager
+Installing dance_action_client script to /choreo_system/install/dance_manager/lib/dance_manager
+Installing dance_action_server script to /choreo_system/install/dance_manager/lib/dance_manager
+Installing dance_visualizer script to /choreo_system/install/dance_manager/lib/dance_manager
+
+Installed /choreo_system/build/dance_manager
+running symlink_data

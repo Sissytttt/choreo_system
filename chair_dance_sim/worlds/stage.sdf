@@ -249,17 +249,77 @@
       </visual></link>
     </model>
 
-    <!-- ── Camera viewpoint (audience perspective) ──────────────────────── -->
-    <gui fullscreen="0">
-      <plugin filename="GzScene3D" name="3D View">
-        <gz-gui>
-          <title>3D View</title>
-        </gz-gui>
-        <engine>ogre2</engine>
-        <scene>scene</scene>
-        <camera_pose>5.5 0 2.5 0 0.3 3.14159</camera_pose>
+    <!-- ── Chair Robot (embedded to avoid spawn/gz-transport issues) ─────── -->
+    <model name='chair_robot'>
+      <pose>0 0 0.01 0 0 0</pose>
+      <link name='base_footprint'>
+        <inertial>
+          <pose>0.04887983706720979 0 0.4418024439918533 0 0 0</pose>
+          <mass>4.91</mass>
+          <inertia>
+            <ixx>0.281118</ixx><ixy>0</ixy><ixz>0.075792</ixz>
+            <iyy>0.303047</iyy><iyz>0</iyz><izz>0.202419</izz>
+          </inertia>
+        </inertial>
+        <collision name='seat_col'><pose>0.1 0 0.46 0 0 0</pose><geometry><box><size>0.4 0.4 0.02</size></box></geometry></collision>
+        <collision name='bl_leg_col'><pose>-0.075 0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry></collision>
+        <collision name='br_leg_col'><pose>-0.075 -0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry></collision>
+        <collision name='back_col'><pose>-0.09 0 0.645 0 -0.1745 0</pose><geometry><box><size>0.02 0.4 0.35</size></box></geometry></collision>
+        <collision name='fl_leg_col'><pose>0.275 0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry></collision>
+        <collision name='fl_cast_col'><pose>0.275 0.175 -0.005 0 0 0</pose><geometry><sphere><radius>0.02</radius></sphere></geometry><surface><friction><ode><mu>0.001</mu><mu2>0.001</mu2></ode></friction></surface></collision>
+        <collision name='fr_leg_col'><pose>0.275 -0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry></collision>
+        <collision name='fr_cast_col'><pose>0.275 -0.175 -0.005 0 0 0</pose><geometry><sphere><radius>0.02</radius></sphere></geometry><surface><friction><ode><mu>0.001</mu><mu2>0.001</mu2></ode></friction></surface></collision>
+        <visual name='seat_vis'><pose>0.1 0 0.46 0 0 0</pose><geometry><box><size>0.4 0.4 0.02</size></box></geometry><material><diffuse>0.15 0.15 0.15 1</diffuse><ambient>0.15 0.15 0.15 1</ambient></material></visual>
+        <visual name='bl_leg_vis'><pose>-0.075 0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry><material><diffuse>0.15 0.15 0.15 1</diffuse><ambient>0.15 0.15 0.15 1</ambient></material></visual>
+        <visual name='br_leg_vis'><pose>-0.075 -0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry><material><diffuse>0.15 0.15 0.15 1</diffuse><ambient>0.15 0.15 0.15 1</ambient></material></visual>
+        <visual name='back_vis'><pose>-0.09 0 0.645 0 -0.1745 0</pose><geometry><box><size>0.02 0.4 0.35</size></box></geometry><material><diffuse>0.15 0.15 0.15 1</diffuse><ambient>0.15 0.15 0.15 1</ambient></material></visual>
+        <visual name='fl_leg_vis'><pose>0.275 0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry><material><diffuse>0.15 0.15 0.15 1</diffuse><ambient>0.15 0.15 0.15 1</ambient></material></visual>
+        <visual name='fl_cast_vis'><pose>0.275 0.175 -0.005 0 0 0</pose><geometry><sphere><radius>0.02</radius></sphere></geometry><material><diffuse>0.5 0.5 0.5 1</diffuse><ambient>0.5 0.5 0.5 1</ambient></material></visual>
+        <visual name='fr_leg_vis'><pose>0.275 -0.175 0.235 0 0 0</pose><geometry><cylinder><length>0.45</length><radius>0.025</radius></cylinder></geometry><material><diffuse>0.15 0.15 0.15 1</diffuse><ambient>0.15 0.15 0.15 1</ambient></material></visual>
+        <visual name='fr_cast_vis'><pose>0.275 -0.175 -0.005 0 0 0</pose><geometry><sphere><radius>0.02</radius></sphere></geometry><material><diffuse>0.5 0.5 0.5 1</diffuse><ambient>0.5 0.5 0.5 1</ambient></material></visual>
+      </link>
+      <joint name='back_left_wheel_joint' type='revolute'>
+        <pose relative_to='base_footprint'>-0.075 0.22 0.01 -1.5708 0 0</pose>
+        <parent>base_footprint</parent><child>back_left_wheel</child>
+        <axis><xyz>0 0 1</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit><dynamics><damping>0.1</damping><friction>0.05</friction></dynamics></axis>
+      </joint>
+      <link name='back_left_wheel'>
+        <pose relative_to='back_left_wheel_joint'>0 0 0 0 0 0</pose>
+        <inertial><mass>0.5</mass><inertia><ixx>0.000741</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.000741</iyy><iyz>0</iyz><izz>0.001406</izz></inertia></inertial>
+        <collision name='blw_col'><geometry><cylinder><length>0.03</length><radius>0.075</radius></cylinder></geometry><surface><friction><ode><mu>1.5</mu><mu2>1.5</mu2></ode></friction></surface></collision>
+        <visual name='blw_vis'><geometry><cylinder><length>0.03</length><radius>0.075</radius></cylinder></geometry><material><diffuse>0.3 0.3 0.3 1</diffuse><ambient>0.3 0.3 0.3 1</ambient></material></visual>
+      </link>
+      <joint name='back_right_wheel_joint' type='revolute'>
+        <pose relative_to='base_footprint'>-0.075 -0.22 0.01 -1.5708 0 0</pose>
+        <parent>base_footprint</parent><child>back_right_wheel</child>
+        <axis><xyz>0 0 1</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit><dynamics><damping>0.1</damping><friction>0.05</friction></dynamics></axis>
+      </joint>
+      <link name='back_right_wheel'>
+        <pose relative_to='back_right_wheel_joint'>0 0 0 0 0 0</pose>
+        <inertial><mass>0.5</mass><inertia><ixx>0.000741</ixx><ixy>0</ixy><ixz>0</ixz><iyy>0.000741</iyy><iyz>0</iyz><izz>0.001406</izz></inertia></inertial>
+        <collision name='brw_col'><geometry><cylinder><length>0.03</length><radius>0.075</radius></cylinder></geometry><surface><friction><ode><mu>1.5</mu><mu2>1.5</mu2></ode></friction></surface></collision>
+        <visual name='brw_vis'><geometry><cylinder><length>0.03</length><radius>0.075</radius></cylinder></geometry><material><diffuse>0.3 0.3 0.3 1</diffuse><ambient>0.3 0.3 0.3 1</ambient></material></visual>
+      </link>
+      <plugin name='gz::sim::systems::DiffDrive' filename='gz-sim-diff-drive-system'>
+        <left_joint>back_left_wheel_joint</left_joint>
+        <right_joint>back_right_wheel_joint</right_joint>
+        <wheel_separation>0.45</wheel_separation>
+        <wheel_radius>0.075</wheel_radius>
+        <max_linear_acceleration>2.0</max_linear_acceleration>
+        <odom_publish_frequency>50</odom_publish_frequency>
+        <topic>cmd_vel</topic>
+        <odom_topic>odom</odom_topic>
+        <tf_topic>tf</tf_topic>
+        <frame_id>odom</frame_id>
+        <child_frame_id>base_footprint</child_frame_id>
       </plugin>
-    </gui>
+      <plugin name='gz::sim::systems::JointStatePublisher' filename='gz-sim-joint-state-publisher-system'>
+        <joint_name>back_left_wheel_joint</joint_name>
+        <joint_name>back_right_wheel_joint</joint_name>
+        <update_rate>50</update_rate>
+        <topic>joint_states</topic>
+      </plugin>
+    </model>
 
   </world>
 </sdf>

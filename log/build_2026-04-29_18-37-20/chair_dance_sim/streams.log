@@ -1,0 +1,48 @@
+[0.011s] Invoking command in '/choreo_system/build/chair_dance_sim': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/dance_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/choreo_system/install/dance_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /choreo_system/chair_dance_sim -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/choreo_system/install/chair_dance_sim
+[0.070s] -- The C compiler identification is GNU 11.4.0
+[0.127s] -- The CXX compiler identification is GNU 11.4.0
+[0.136s] -- Detecting C compiler ABI info
+[0.225s] -- Detecting C compiler ABI info - done
+[0.234s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.235s] -- Detecting C compile features
+[0.235s] -- Detecting C compile features - done
+[0.239s] -- Detecting CXX compiler ABI info
+[0.337s] -- Detecting CXX compiler ABI info - done
+[0.347s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.347s] -- Detecting CXX compile features
+[0.348s] -- Detecting CXX compile features - done
+[0.354s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.476s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.526s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.640s] -- Configuring done
+[0.657s] -- Generating done
+[0.669s] -- Build files have been written to: /choreo_system/build/chair_dance_sim
+[0.670s] Invoked command in '/choreo_system/build/chair_dance_sim' returned '0': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/dance_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/choreo_system/install/dance_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /choreo_system/chair_dance_sim -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/choreo_system/install/chair_dance_sim
+[0.672s] Invoking command in '/choreo_system/build/chair_dance_sim': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/dance_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/choreo_system/install/dance_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /choreo_system/build/chair_dance_sim -- -j10 -l10
+[0.714s] Invoked command in '/choreo_system/build/chair_dance_sim' returned '0': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/dance_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/choreo_system/install/dance_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /choreo_system/build/chair_dance_sim -- -j10 -l10
+[0.717s] Invoking command in '/choreo_system/build/chair_dance_sim': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/dance_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/choreo_system/install/dance_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /choreo_system/build/chair_dance_sim
+[0.726s] -- Install configuration: ""
+[0.726s] -- Execute custom install script
+[0.729s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/urdf/chair_robot.urdf.xacro
+[0.739s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/worlds/stage.sdf
+[0.748s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/launch/simulation_launch.py
+[0.758s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/launch/view_robot_launch.py
+[0.768s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/config/sim_params.yaml
+[0.776s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/config/twist_mux.yaml
+[0.785s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/config/view_robot.rviz
+[0.793s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/ament_index/resource_index/package_run_dependencies/chair_dance_sim
+[0.803s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/ament_index/resource_index/parent_prefix_path/chair_dance_sim
+[0.812s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/environment/ament_prefix_path.sh
+[0.821s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/environment/ament_prefix_path.dsv
+[0.830s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/environment/path.sh
+[0.839s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/environment/path.dsv
+[0.849s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/local_setup.bash
+[0.861s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/local_setup.sh
+[0.871s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/local_setup.zsh
+[0.880s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/local_setup.dsv
+[0.890s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.dsv
+[0.900s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/ament_index/resource_index/packages/chair_dance_sim
+[0.910s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/cmake/chair_dance_simConfig.cmake
+[0.919s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/cmake/chair_dance_simConfig-version.cmake
+[0.927s] -- Symlinking: /choreo_system/install/chair_dance_sim/share/chair_dance_sim/package.xml
+[0.937s] Invoked command in '/choreo_system/build/chair_dance_sim' returned '0': AMENT_PREFIX_PATH=/choreo_system/install/dance_manager:/choreo_system/install/dance_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/choreo_system/install/dance_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/choreo_system/install/dance_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/choreo_system/build/dance_manager:/choreo_system/install/dance_manager/lib/python3.10/site-packages:/choreo_system/install/dance_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /choreo_system/build/chair_dance_sim

@@ -1,0 +1,27 @@
+running develop
+running egg_info
+creating mobile_robot_control.egg-info
+writing mobile_robot_control.egg-info/PKG-INFO
+writing dependency_links to mobile_robot_control.egg-info/dependency_links.txt
+writing entry points to mobile_robot_control.egg-info/entry_points.txt
+writing requirements to mobile_robot_control.egg-info/requires.txt
+writing top-level names to mobile_robot_control.egg-info/top_level.txt
+writing manifest file 'mobile_robot_control.egg-info/SOURCES.txt'
+reading manifest file 'mobile_robot_control.egg-info/SOURCES.txt'
+writing manifest file 'mobile_robot_control.egg-info/SOURCES.txt'
+running build_ext
+Creating /choreo_system/install/mobile_robot_control/lib/python3.10/site-packages/mobile-robot-control.egg-link (link to .)
+Installing mobile_robot_control_node script to /choreo_system/install/mobile_robot_control/lib/mobile_robot_control
+
+Installed /choreo_system/build/mobile_robot_control
+running symlink_data
+creating /choreo_system/install/mobile_robot_control/share/ament_index
+creating /choreo_system/install/mobile_robot_control/share/ament_index/resource_index
+creating /choreo_system/install/mobile_robot_control/share/ament_index/resource_index/packages
+symbolically linking /choreo_system/build/mobile_robot_control/resource/mobile_robot_control -> /choreo_system/install/mobile_robot_control/share/ament_index/resource_index/packages
+symbolically linking /choreo_system/build/mobile_robot_control/package.xml -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+symbolically linking /choreo_system/build/mobile_robot_control/launch/hoverboard_launch.py -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+symbolically linking /choreo_system/build/mobile_robot_control/launch/mobile_robot_launch.py -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+symbolically linking /choreo_system/build/mobile_robot_control/launch/joystick_launch.py -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control
+creating /choreo_system/install/mobile_robot_control/share/mobile_robot_control/config
+symbolically linking /choreo_system/build/mobile_robot_control/config/twist_mux.yaml -> /choreo_system/install/mobile_robot_control/share/mobile_robot_control/config

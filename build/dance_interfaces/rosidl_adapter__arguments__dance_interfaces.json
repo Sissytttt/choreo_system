@@ -1,0 +1,6 @@
+{
+  "package_name": "dance_interfaces",
+  "non_idl_tuples": [
+    "/choreo_system/dance_interfaces:action/Dance.action"
+  ]
+}

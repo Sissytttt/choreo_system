@@ -189,7 +189,7 @@ def generate_launch_description():
 
         # Give Gz Sim 3 seconds to start, then spawn robot + start dance system
         TimerAction(
-            period=3.0,
+            period=8.0,
             actions=[
                 spawn_robot,
                 gz_bridge,

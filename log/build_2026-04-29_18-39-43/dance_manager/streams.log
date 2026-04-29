@@ -1,0 +1,20 @@
+[0.964s] Invoking command in '/choreo_system/build/dance_manager': PYTHONPATH=/choreo_system/build/dance_manager/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/dance_manager/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/dance_manager/build --no-deps symlink_data
+[1.170s] running develop
+[1.316s] running egg_info
+[1.319s] writing dance_manager.egg-info/PKG-INFO
+[1.320s] writing dependency_links to dance_manager.egg-info/dependency_links.txt
+[1.322s] writing entry points to dance_manager.egg-info/entry_points.txt
+[1.324s] writing requirements to dance_manager.egg-info/requires.txt
+[1.324s] writing top-level names to dance_manager.egg-info/top_level.txt
+[1.326s] reading manifest file 'dance_manager.egg-info/SOURCES.txt'
+[1.333s] writing manifest file 'dance_manager.egg-info/SOURCES.txt'
+[1.334s] running build_ext
+[1.337s] Creating /choreo_system/install/dance_manager/lib/python3.10/site-packages/dance-manager.egg-link (link to .)
+[1.338s] Installing choreographer script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.339s] Installing dance_action_client script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.340s] Installing dance_action_server script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.341s] Installing dance_visualizer script to /choreo_system/install/dance_manager/lib/dance_manager
+[1.342s] 
+[1.342s] Installed /choreo_system/build/dance_manager
+[1.343s] running symlink_data
+[1.385s] Invoked command in '/choreo_system/build/dance_manager' returned '0': PYTHONPATH=/choreo_system/build/dance_manager/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/choreo_system/install/dance_manager/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /choreo_system/build/dance_manager/build --no-deps symlink_data
