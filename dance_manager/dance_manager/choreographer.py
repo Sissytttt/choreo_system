@@ -716,11 +716,20 @@ The energy/tension journey across the WHOLE dance:
   flat     consistent energy — for meditative, trance-like pieces (rare).
 
 ━━ Section roles ━━
-Organise the dance into 3–5 sections. Each section has a clear dramatic role:
-  introduction   Establish personality and mood. Moderate energy. Set the world.
-  development    Build tension. Explore and transform the opening material.
-  climax         The ONE peak moment. Maximum energy, commitment, and surprise.
-  resolution     Wind down. Return to calm. Create closure. Echo of introduction.
+Organise the dance into 4–5 sections. Each section has a clear dramatic role:
+  introduction   CONTRACTION energy (0.2–0.45). Small, tentative, in-place or small steps.
+                 Establish personality. The audience learns the robot's character.
+                 2–3 phrases. Mostly bound flow. Cloud or honey texture.
+  development    GROWING energy (0.4–0.7). Mix contraction and expansion.
+                 Introduce larger moves, test the space, build tension.
+                 3–4 phrases. Alternating bound and free flow.
+  climax         MAXIMUM expansion (0.8–1.0). Robot uses the full stage.
+                 Fast, sweeping, committed — Arc, Spiral, ChaineTurns, SuddenStop.
+                 2–3 phrases. Staccato or ice texture. This is the PEAK — go all out.
+                 Use gap_before 0.8–1.5s before the climax phrase for maximum suspense.
+  resolution     CONTRACTION energy (0.1–0.35). Small, slow, closing inward.
+                 Echo a motif from the introduction. Create closure.
+                 2 phrases. Honey or cloud. Very low energy. Ends with Bow or stillness.
   bridge         A contrasting episode (in Rondo/ABA). Different quality.
   coda           A brief final statement. Very low energy. Last impression.
 
@@ -870,14 +879,37 @@ Nested group (for group structural operations):
 
 {vocabulary_description}
 
+━━ Expansion vs Contraction ━━
+Expansion and contraction are the breath of dance — essential contrast you MUST use:
+
+EXPANSION — opening outward, maximum use of space:
+  Large sweeping paths: Arc, Spiral, FigureEight, Flower, Slalom, Zigzag at high energy (0.7-1.0)
+  Fast moves: SuddenStop, ChaineTurns, Spin (±360) at staccato or ice texture
+  Wide arcs, long distances, fast turns → robot FILLS the stage
+  gap_before: 0.5-1.0s (suspended breath before launching outward)
+
+CONTRACTION — pulling inward, minimal space, tension held in:
+  In-place: Pulse, Vibrate, Shimmy, Glance, Bow at low energy (0.1-0.4)
+  Small contained moves: Tap, Step with short distance
+  honey or cloud texture → bound, withholding, coiled
+  gap_before: 0.0-0.2s (tight, no breath)
+
+Expansion → Contraction → Expansion creates the wave of tension and release.
+NEVER keep the same spatial scale for more than 2 consecutive phrases.
+The climax section should have maximum expansion — the robot uses the FULL stage.
+
 ━━ Quality rules ━━
-- Budget ~3–8 seconds per move. Total dance: 30–120s unless specified.
+- Each move takes ~3–8 seconds. MINIMUM total dance: 60 seconds. Target: 75–100s.
+- Generate at LEAST 20 motifs total across all sections (more is better).
+- Each section must have at LEAST 2 phrases; the development and climax sections at least 3.
+- Use the FULL energy range: contraction phrases at 0.1–0.35, expansion phrases at 0.75–1.0.
 - Never invent move names — only use the list above.
 - Keep annotations under 50 chars.
 - Return ONLY the JSON object. No markdown fences, no extra text.
-- Every section should be distinctly different in effort quality from adjacent sections.
-- The climax section must have the highest energy of the whole dance.
+- Every section MUST be distinctly different in effort quality AND spatial scale from adjacent sections.
+- The climax section must have the highest energy of the whole dance AND the largest spatial moves.
 - The resolution section must have lower energy than the introduction.
+- CONTRAST CHECK: before finalising, verify that no two adjacent phrases have similar energy AND similar spatial scale.
 {stage_constraints}\
 """
 
